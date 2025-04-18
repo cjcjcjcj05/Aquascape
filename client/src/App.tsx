@@ -1,0 +1,38 @@
+import { Switch, Route, useLocation } from "wouter";
+import { Toaster } from "@/components/ui/toaster";
+import { TooltipProvider } from "@/components/ui/tooltip";
+import { QueryClientProvider } from "@tanstack/react-query";
+import { queryClient } from "./lib/queryClient";
+import { DndProvider } from "react-dnd";
+import { HTML5Backend } from "react-dnd-html5-backend";
+import Header from "./components/Header";
+import Home from "./pages/Home";
+import Editor from "./pages/Editor";
+import About from "./pages/About";
+import NotFound from "./pages/not-found";
+
+export default function App() {
+  const [location] = useLocation();
+  const isEditorPage = location === "/editor";
+
+  return (
+    <QueryClientProvider client={queryClient}>
+      <DndProvider backend={HTML5Backend}>
+        <TooltipProvider>
+          <div className="h-screen flex flex-col overflow-hidden">
+            <Header />
+            <main className="flex-1 overflow-hidden">
+              <Switch>
+                <Route path="/" component={Home} />
+                <Route path="/editor" component={Editor} />
+                <Route path="/about" component={About} />
+                <Route component={NotFound} />
+              </Switch>
+            </main>
+          </div>
+          <Toaster />
+        </TooltipProvider>
+      </DndProvider>
+    </QueryClientProvider>
+  );
+}
