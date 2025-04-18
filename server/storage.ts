@@ -2,6 +2,11 @@ import {
   users, type User, type InsertUser,
   designs, type Design, type InsertDesign, type UpdateDesign
 } from "@shared/schema";
+import { db } from "./db";
+import { eq, and } from "drizzle-orm";
+import session from "express-session";
+import connectPg from "connect-pg-simple";
+import { pool } from "./db";
 
 export interface IStorage {
   getUser(id: number): Promise<User | undefined>;
@@ -13,74 +18,77 @@ export interface IStorage {
   createDesign(design: InsertDesign): Promise<Design>;
   updateDesign(id: number, design: UpdateDesign): Promise<Design | undefined>;
   deleteDesign(id: number): Promise<boolean>;
+  
+  sessionStore: any; // We'll use any type since SessionStore is not exported
 }
 
-export class MemStorage implements IStorage {
-  private users: Map<number, User>;
-  private designs: Map<number, Design>;
-  private userIdCounter: number;
-  private designIdCounter: number;
+const PostgresSessionStore = connectPg(session);
+
+export class DatabaseStorage implements IStorage {
+  sessionStore: any;
 
   constructor() {
-    this.users = new Map();
-    this.designs = new Map();
-    this.userIdCounter = 1;
-    this.designIdCounter = 1;
+    // Create a session store that will store sessions in PostgreSQL
+    this.sessionStore = new PostgresSessionStore({
+      pool,
+      createTableIfMissing: true
+    });
   }
 
   async getUser(id: number): Promise<User | undefined> {
-    return this.users.get(id);
+    const [user] = await db.select().from(users).where(eq(users.id, id));
+    return user || undefined;
   }
 
   async getUserByUsername(username: string): Promise<User | undefined> {
-    return Array.from(this.users.values()).find(
-      (user) => user.username === username,
-    );
+    const [user] = await db.select().from(users).where(eq(users.username, username));
+    return user || undefined;
   }
 
   async createUser(insertUser: InsertUser): Promise<User> {
-    const id = this.userIdCounter++;
-    const user: User = { ...insertUser, id };
-    this.users.set(id, user);
+    const [user] = await db
+      .insert(users)
+      .values(insertUser)
+      .returning();
     return user;
   }
 
   async getDesigns(userId?: number): Promise<Design[]> {
     if (userId) {
-      return Array.from(this.designs.values()).filter(design => design.userId === userId);
+      return db.select().from(designs).where(eq(designs.userId, userId));
     }
-    return Array.from(this.designs.values());
+    return db.select().from(designs);
   }
 
   async getDesign(id: number): Promise<Design | undefined> {
-    return this.designs.get(id);
+    const [design] = await db.select().from(designs).where(eq(designs.id, id));
+    return design || undefined;
   }
 
   async createDesign(insertDesign: InsertDesign): Promise<Design> {
-    const id = this.designIdCounter++;
-    const design: Design = { ...insertDesign, id };
-    this.designs.set(id, design);
+    const [design] = await db
+      .insert(designs)
+      .values(insertDesign)
+      .returning();
     return design;
   }
 
   async updateDesign(id: number, updateDesign: UpdateDesign): Promise<Design | undefined> {
-    const existingDesign = this.designs.get(id);
-    if (!existingDesign) {
-      return undefined;
-    }
-    
-    const updatedDesign: Design = { 
-      ...existingDesign, 
-      ...updateDesign,
-    };
-    
-    this.designs.set(id, updatedDesign);
-    return updatedDesign;
+    const [design] = await db
+      .update(designs)
+      .set(updateDesign)
+      .where(eq(designs.id, id))
+      .returning();
+    return design || undefined;
   }
 
   async deleteDesign(id: number): Promise<boolean> {
-    return this.designs.delete(id);
+    const result = await db
+      .delete(designs)
+      .where(eq(designs.id, id));
+    // Check if any rows were affected
+    return result !== undefined && Object.keys(result).length > 0;
   }
 }
 
-export const storage = new MemStorage();
+export const storage = new DatabaseStorage();

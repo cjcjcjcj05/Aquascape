@@ -6,7 +6,6 @@ import { scrypt, randomBytes, timingSafeEqual } from "crypto";
 import { promisify } from "util";
 import { storage } from "./storage";
 import { User as SelectUser } from "@shared/schema";
-import createMemoryStore from "memorystore";
 
 declare global {
   namespace Express {
@@ -15,7 +14,6 @@ declare global {
 }
 
 const scryptAsync = promisify(scrypt);
-const MemoryStore = createMemoryStore(session);
 
 // Hash password using scrypt with salt
 export async function hashPassword(password: string) {
@@ -37,9 +35,7 @@ export function setupAuth(app: Express) {
     secret: process.env.SESSION_SECRET || "aquadesign-secret-key", // Use environment variable in production
     resave: false,
     saveUninitialized: false,
-    store: new MemoryStore({
-      checkPeriod: 86400000 // prune expired entries every 24h
-    }),
+    store: storage.sessionStore, // Use PostgreSQL session store
     cookie: {
       maxAge: 7 * 24 * 60 * 60 * 1000, // 1 week
       httpOnly: true,

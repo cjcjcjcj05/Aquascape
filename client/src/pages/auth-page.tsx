@@ -33,6 +33,7 @@ const loginSchema = z.object({
 });
 
 const registerSchema = loginSchema.extend({
+  email: z.string().email("Please enter a valid email address").optional(),
   confirmPassword: z.string().min(6, "Password must be at least 6 characters"),
 }).refine((data) => data.password === data.confirmPassword, {
   message: "Passwords don't match",
@@ -68,6 +69,7 @@ export default function AuthPage() {
     resolver: zodResolver(registerSchema),
     defaultValues: {
       username: "",
+      email: "",
       password: "",
       confirmPassword: "",
     },
