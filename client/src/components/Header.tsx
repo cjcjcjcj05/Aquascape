@@ -1,14 +1,16 @@
 import { Link, useLocation } from "wouter";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
+import { useAuth } from "@/hooks/use-auth";
 import { useStore } from "@/store/editorStore";
 import { useState } from "react";
-import { FaMoon, FaSun, FaSave } from "react-icons/fa";
+import { FaMoon, FaSun, FaSave, FaUser, FaSignOutAlt } from "react-icons/fa";
 
 export default function Header() {
-  const [location] = useLocation();
+  const [location, navigate] = useLocation();
   const [isDarkMode, setIsDarkMode] = useState(false);
   const { toast } = useToast();
+  const { user, logoutMutation } = useAuth();
   const saveProject = useStore(state => state.saveProject);
   
   const handleSaveProject = () => {
@@ -16,6 +18,14 @@ export default function Header() {
     toast({
       title: "Project Saved",
       description: "Your aquascape design has been saved.",
+    });
+  };
+  
+  const handleLogout = () => {
+    logoutMutation.mutate(undefined, {
+      onSuccess: () => {
+        navigate('/');
+      }
     });
   };
   
@@ -70,6 +80,28 @@ export default function Header() {
           >
             <FaSave className="mr-2" /> Save Project
           </Button>
+        )}
+        
+        {user ? (
+          <div className="flex items-center space-x-2">
+            <div className="text-sm font-medium hidden md:block">
+              Hi, {user.username}
+            </div>
+            <Button 
+              variant="outline"
+              className="flex items-center"
+              onClick={handleLogout}
+              disabled={logoutMutation.isPending}
+            >
+              <FaSignOutAlt className="mr-2" /> Logout
+            </Button>
+          </div>
+        ) : (
+          <Link href="/auth">
+            <Button className="flex items-center">
+              <FaUser className="mr-2" /> Login
+            </Button>
+          </Link>
         )}
       </div>
     </header>
