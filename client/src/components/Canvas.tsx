@@ -3,6 +3,7 @@ import { Stage, Layer, Rect, Image as KonvaImage, Transformer } from "react-konv
 import { useDrop } from "react-dnd";
 import { useStore } from "@/store/editorStore";
 import { Asset, CanvasElement } from "@/lib/types";
+import { useToast } from "@/hooks/use-toast";
 import useImage from "use-image";
 import { 
   FaSearchMinus, 
@@ -95,6 +96,7 @@ const CanvasElementComponent = ({
 export default function Canvas() {
   const stageRef = useRef<any>(null);
   const [scale, setScale] = useState(1);
+  const { toast } = useToast();
   const { 
     tankDimensions, 
     elements, 
@@ -239,76 +241,146 @@ export default function Canvas() {
       
       {/* Canvas Toolbar */}
       <div className="absolute bottom-5 left-1/2 -translate-x-1/2 flex items-center space-x-2 p-1.5 bg-white/90 backdrop-blur-sm rounded-full border border-gray-200 shadow-sm">
-        <Button
-          variant="ghost"
-          size="icon"
-          className="w-8 h-8 rounded-full hover:bg-gray-100 text-ui-dark"
-          onClick={zoomOut}
-        >
-          <FaSearchMinus />
-        </Button>
+        <div className="relative group">
+          <Button
+            variant="ghost"
+            size="icon"
+            className="w-8 h-8 rounded-full hover:bg-gray-100 text-ui-dark"
+            onClick={zoomOut}
+          >
+            <FaSearchMinus />
+          </Button>
+          <div className="absolute bottom-full mb-2 left-1/2 -translate-x-1/2 hidden group-hover:block bg-gray-800 text-white text-xs rounded py-1 px-2 whitespace-nowrap">
+            Zoom Out
+          </div>
+        </div>
+        
         <div className="px-2 text-sm">{Math.round(scale * 100)}%</div>
-        <Button
-          variant="ghost"
-          size="icon"
-          className="w-8 h-8 rounded-full hover:bg-gray-100 text-ui-dark"
-          onClick={zoomIn}
-        >
-          <FaSearchPlus />
-        </Button>
+        
+        <div className="relative group">
+          <Button
+            variant="ghost"
+            size="icon"
+            className="w-8 h-8 rounded-full hover:bg-gray-100 text-ui-dark"
+            onClick={zoomIn}
+          >
+            <FaSearchPlus />
+          </Button>
+          <div className="absolute bottom-full mb-2 left-1/2 -translate-x-1/2 hidden group-hover:block bg-gray-800 text-white text-xs rounded py-1 px-2 whitespace-nowrap">
+            Zoom In
+          </div>
+        </div>
+        
         <div className="h-4 w-px bg-gray-200 mx-1"></div>
-        <Button
-          variant="ghost"
-          size="icon"
-          className="w-8 h-8 rounded-full hover:bg-gray-100 text-ui-dark"
-          onClick={resetZoom}
-        >
-          <FaExpand />
-        </Button>
+        
+        <div className="relative group">
+          <Button
+            variant="ghost"
+            size="icon"
+            className="w-8 h-8 rounded-full hover:bg-gray-100 text-ui-dark"
+            onClick={resetZoom}
+          >
+            <FaExpand />
+          </Button>
+          <div className="absolute bottom-full mb-2 left-1/2 -translate-x-1/2 hidden group-hover:block bg-gray-800 text-white text-xs rounded py-1 px-2 whitespace-nowrap">
+            Reset Zoom
+          </div>
+        </div>
+        
         <div className="h-4 w-px bg-gray-200 mx-1"></div>
-        <Button
-          variant="ghost"
-          size="icon"
-          className="w-8 h-8 rounded-full hover:bg-gray-100 text-ui-dark"
-          onClick={undo}
-          disabled={!canUndo}
-        >
-          <FaUndo />
-        </Button>
-        <Button
-          variant="ghost"
-          size="icon"
-          className="w-8 h-8 rounded-full hover:bg-gray-100 text-ui-dark"
-          onClick={redo}
-          disabled={!canRedo}
-        >
-          <FaRedo />
-        </Button>
+        
+        <div className="relative group">
+          <Button
+            variant="ghost"
+            size="icon"
+            className="w-8 h-8 rounded-full hover:bg-gray-100 text-ui-dark"
+            onClick={undo}
+            disabled={!canUndo}
+          >
+            <FaUndo />
+          </Button>
+          <div className="absolute bottom-full mb-2 left-1/2 -translate-x-1/2 hidden group-hover:block bg-gray-800 text-white text-xs rounded py-1 px-2 whitespace-nowrap">
+            Undo
+          </div>
+        </div>
+        
+        <div className="relative group">
+          <Button
+            variant="ghost"
+            size="icon"
+            className="w-8 h-8 rounded-full hover:bg-gray-100 text-ui-dark"
+            onClick={redo}
+            disabled={!canRedo}
+          >
+            <FaRedo />
+          </Button>
+          <div className="absolute bottom-full mb-2 left-1/2 -translate-x-1/2 hidden group-hover:block bg-gray-800 text-white text-xs rounded py-1 px-2 whitespace-nowrap">
+            Redo
+          </div>
+        </div>
       </div>
       
       {/* Quick Actions */}
       <div className="absolute top-5 right-5 flex flex-col space-y-2">
-        <Button
-          variant="outline"
-          size="icon"
-          className="w-10 h-10 rounded-md bg-white hover:bg-gray-100 text-ui-dark border border-gray-200"
-        >
-          <FaEye />
-        </Button>
-        <Button
-          variant="outline"
-          size="icon"
-          className="w-10 h-10 rounded-md bg-white hover:bg-gray-100 text-ui-dark border border-gray-200"
-        >
-          <FaRulerCombined />
-        </Button>
-        <Button
-          variant="outline"
-          size="icon"
-          className="w-10 h-10 rounded-md bg-white hover:bg-gray-100 text-ui-dark border border-gray-200"
-        >
-          <FaThLarge />
-        </Button>
+        <div className="relative group">
+          <Button
+            variant="outline"
+            size="icon"
+            className="w-10 h-10 rounded-md bg-white hover:bg-gray-100 text-ui-dark border border-gray-200"
+            onClick={() => {
+              // Toggle between wireframe and preview mode in the future
+              toast({
+                title: "Preview Mode",
+                description: "Preview mode will be available in the next version.",
+              });
+            }}
+          >
+            <FaEye />
+          </Button>
+          <div className="absolute right-full mr-2 top-1/2 -translate-y-1/2 hidden group-hover:block bg-gray-800 text-white text-xs rounded py-1 px-2 whitespace-nowrap">
+            Preview Mode
+          </div>
+        </div>
+        
+        <div className="relative group">
+          <Button
+            variant="outline"
+            size="icon"
+            className="w-10 h-10 rounded-md bg-white hover:bg-gray-100 text-ui-dark border border-gray-200"
+            onClick={() => {
+              // Toggle measurement tools in the future
+              toast({
+                title: "Measurement Tools",
+                description: "Measurement tools will be available in the next version.",
+              });
+            }}
+          >
+            <FaRulerCombined />
+          </Button>
+          <div className="absolute right-full mr-2 top-1/2 -translate-y-1/2 hidden group-hover:block bg-gray-800 text-white text-xs rounded py-1 px-2 whitespace-nowrap">
+            Measurement Tools
+          </div>
+        </div>
+        
+        <div className="relative group">
+          <Button
+            variant="outline"
+            size="icon"
+            className="w-10 h-10 rounded-md bg-white hover:bg-gray-100 text-ui-dark border border-gray-200"
+            onClick={() => {
+              // Toggle grid visibility in the future
+              toast({
+                title: "Toggle Grid",
+                description: "Grid visibility control will be available in the next version.",
+              });
+            }}
+          >
+            <FaThLarge />
+          </Button>
+          <div className="absolute right-full mr-2 top-1/2 -translate-y-1/2 hidden group-hover:block bg-gray-800 text-white text-xs rounded py-1 px-2 whitespace-nowrap">
+            Toggle Grid
+          </div>
+        </div>
       </div>
     </main>
   );
