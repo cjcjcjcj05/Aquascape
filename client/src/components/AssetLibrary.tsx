@@ -17,7 +17,7 @@ function SubstrateLibrary() {
   } = useStore();
   
   return (
-    <div className="flex-1 overflow-y-auto p-3 bg-white h-full">
+    <div className="p-3 bg-white">
       <div className="mb-4">
         <h3 className="font-medium text-sm mb-3">Substrate Types</h3>
         <p className="text-xs text-muted-foreground mb-4">
@@ -147,7 +147,7 @@ export default function AssetLibrary() {
   });
   
   return (
-    <div className="flex-1 overflow-y-auto p-3 bg-white h-full">
+    <div className="p-3 bg-white">
       <div className="mb-3">
         <div className="relative">
           <Input

@@ -72,10 +72,12 @@ export default function Sidebar() {
         </div>
         
         {activeTab === 'library' ? (
-          <>
+          <div className="flex flex-col h-full overflow-hidden">
             <CategoryNav />
-            <AssetLibrary />
-          </>
+            <div className="flex-1 overflow-auto">
+              <AssetLibrary />
+            </div>
+          </div>
         ) : (
           <div className="flex-1 overflow-y-auto p-4">
             <h3 className="font-medium text-sm mb-3">Elements</h3>
