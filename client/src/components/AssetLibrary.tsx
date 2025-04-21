@@ -70,7 +70,7 @@ function SubstrateLibrary() {
         </div>
       </div>
       
-      <div className="px-4 pb-4 flex-1 overflow-y-auto">
+      <div className="px-4 pb-4 flex-1 overflow-y-auto overflow-x-hidden scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-gray-100">
         <div className="mb-3">
           <p className="text-xs text-muted-foreground">
             Click on a substrate option to apply it to your aquarium.
@@ -226,7 +226,7 @@ export default function AssetLibrary() {
         </div>
       </div>
       
-      <div className="px-4 pb-4 flex-1 overflow-y-auto">
+      <div className="px-4 pb-4 flex-1 overflow-y-auto overflow-x-hidden scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-gray-100">
         <div className="grid grid-cols-2 gap-4">
           {filteredAssets.map((asset) => (
             <AssetItem key={asset.id} asset={asset} />
