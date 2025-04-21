@@ -6,7 +6,7 @@ import { Input } from "@/components/ui/input";
 import { Slider } from "@/components/ui/slider";
 import { CanvasElement, Asset } from "@/lib/types";
 import { SubstrateControls } from "@/components/SubstrateControls";
-import { getAssetById } from "@/lib/assetData";
+import { getAssetById, getAssetsByCategory } from "@/lib/assetData";
 
 export default function PropertyPanel() {
   const selectedElementId = useStore(state => state.selectedElement);
@@ -39,16 +39,11 @@ export default function PropertyPanel() {
   // Get all plants and find the one matching the selected element's name
   const allPlants = getAssetsByCategory('plants');
   const asset = selectedElement.type === 'plants' 
-    ? allPlants.find(a => a.name === selectedElement.name) 
+    ? allPlants.find((a: Asset) => a.name === selectedElement.name) 
     : null;
   
   // Check if this plant is a carpeting plant
   const isCarpetingPlant = asset?.isCarpeting || false;
-  
-  // Log for debugging
-  console.log('Selected plant:', selectedElement.name);
-  console.log('Found asset:', asset);
-  console.log('Is carpeting plant:', isCarpetingPlant);
   
   const getElementIcon = (type: string) => {
     switch (type) {
