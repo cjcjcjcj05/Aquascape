@@ -150,11 +150,6 @@ export default function Header() {
             My Designs
           </span>
         </Link>
-        <Link href="/asset-generator">
-          <span className={`font-medium cursor-pointer ${location === '/asset-generator' ? 'text-primary border-b-2 border-primary pb-1' : 'text-ui-dark hover:text-primary'} transition`}>
-            Asset Generator
-          </span>
-        </Link>
         <Link href="/about">
           <span className={`font-medium cursor-pointer ${location === '/about' ? 'text-primary border-b-2 border-primary pb-1' : 'text-ui-dark hover:text-primary'} transition`}>
             About

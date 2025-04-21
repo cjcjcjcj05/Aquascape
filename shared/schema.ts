@@ -11,7 +11,8 @@ export const users = pgTable("users", {
   verificationToken: text("verification_token"),
   createdAt: text("created_at").default(new Date().toISOString()),
   resetToken: text("reset_token"),
-  resetTokenExpiry: text("reset_token_expiry")
+  resetTokenExpiry: text("reset_token_expiry"),
+  isAdmin: boolean("is_admin").default(false) // Added admin flag
 });
 
 export const insertUserSchema = createInsertSchema(users).pick({

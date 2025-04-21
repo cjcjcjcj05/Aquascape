@@ -37,7 +37,12 @@ export default function App() {
                   <ProtectedRoute path="/editor" component={Editor} />
                   <ProtectedRoute path="/profile" component={ProfilePage} />
                   <ProtectedRoute path="/designs" component={DesignsPage} />
-                  <ProtectedRoute path="/asset-generator" component={AssetGeneratorPage} />
+                  {/* Asset generator only available for admins */}
+                  <ProtectedRoute 
+                    path="/admin/asset-generator" 
+                    component={AssetGeneratorPage}
+                    requireAdmin={true}
+                  />
                   <Route path="/about" component={About} />
                   <Route path="/auth" component={AuthPage} />
                   <Route path="/forgot-password" component={ForgotPasswordPage} />
