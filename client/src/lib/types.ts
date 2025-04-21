@@ -57,6 +57,7 @@ export interface CanvasElement {
   height: number;
   rotation: number;
   depth: 'front' | 'middle' | 'back';
+  carpetGroupId?: string; // Used to group carpet plants together for selection
 }
 
 export interface Design {

@@ -42,6 +42,7 @@ interface EditorState {
   createCarpet: (asset: Asset) => void;
   clearAllElements: () => void;
   saveProject: () => void;
+  selectAllOfType: (name: string, carpetGroupId?: string) => void;
   
   // History actions
   undo: () => void;
@@ -267,12 +268,12 @@ export const useStore = create<EditorState>()(
         const substrateY = stageHeight - substrateBaseHeight;
         
         // Create a denser grid
-        const columns = 14;
+        const columns = 16; // More columns for fuller coverage
         const rows = 5;
         
-        // Minimal margin to ensure full coverage
-        const margin = 10; // Just 10px margin
-        const usableWidth = stageWidth - (margin * 2);
+        // Ensure complete edge-to-edge coverage with minimal margins
+        const margin = 0; // No margin for complete coverage
+        const usableWidth = stageWidth;
         
         // Calculate spacing - slightly overlap plants for a denser look
         const columnSpacing = usableWidth / (columns - 1); // Subtract 1 to ensure full coverage
@@ -281,6 +282,7 @@ export const useStore = create<EditorState>()(
         const rowSpacing = defaultHeight * 0.65; // More overlap for density
         
         const timestamp = Date.now(); // Use same timestamp for batch to avoid duplicate IDs
+        const carpetId = `carpet-${timestamp}`; // Unique ID for this carpet group
         
         // First layer: Create a solid base of plants
         for (let row = 0; row < rows; row++) {
@@ -290,16 +292,16 @@ export const useStore = create<EditorState>()(
             const randomOffsetY = Math.random() * 6 - 3; // ±3px
             const randomScale = 0.9 + (Math.random() * 0.2); // 0.9 to 1.1 (subtle variation)
             
-            // Calculate position - ensure plants are positioned ON the substrate
+            // Calculate position - ensure plants are positioned ON the substrate and properly centered
             const x = margin + (col * columnSpacing) + randomOffsetX;
             
             // Position vertically from the substrate upward - plants further from viewer are higher up
-            const y = substrateY - (defaultHeight * 0.7) + (row * rowSpacing) + randomOffsetY;
+            const y = substrateY - (defaultHeight * 0.6) + (row * rowSpacing) + randomOffsetY;
             
             // Ensure the plant doesn't go below the tank bottom
             const adjustedY = Math.min(y, stageHeight - 10);
             
-            // Gentle rotation (-15 to +15 degrees) for a more organized look
+            // Gentler rotation (-15 to +15 degrees) for a more organized look
             const gentleRotation = Math.random() * 30 - 15;
             
             const newElement: CanvasElement = {
@@ -313,20 +315,31 @@ export const useStore = create<EditorState>()(
               height: defaultHeight * randomScale,
               rotation: gentleRotation,
               depth: 'front',
+              // Add a carpet group ID so we can select all plants from the same carpet
+              carpetGroupId: carpetId
             };
             get().addElement(newElement);
           }
         }
         
-        // Second layer: Fill any visible gaps with additional plants
-        // Focus on edges and areas between main grid plants
-        for (let i = 0; i < 10; i++) {
-          // Position strategically to fill gaps
-          const col = Math.random() * (columns - 1);
-          const row = Math.random() * (rows - 1);
+        // Second layer: Fill any visible gaps, especially in the center and edges
+        // Place 15 plants (more than before) to ensure proper coverage
+        for (let i = 0; i < 15; i++) {
+          // Position strategically to fill gaps - focus on center and edges
+          let col, x;
           
-          const x = margin + (col * columnSpacing) + columnSpacing/2; // Place between columns
-          const y = substrateY - (defaultHeight * 0.7) + (row * rowSpacing) + rowSpacing/2; // Place between rows
+          if (i < 5) {
+            // Focus on edges
+            col = i < 3 ? 0.5 : columns - 1.5;
+            x = i < 3 ? margin + 5 : stageWidth - 5 - defaultWidth;
+          } else {
+            // Focus on center and random spots to fill gaps
+            col = 1 + Math.random() * (columns - 2);
+            x = margin + (col * columnSpacing) + columnSpacing/2;
+          }
+          
+          const row = Math.random() * (rows - 1);
+          const y = substrateY - (defaultHeight * 0.6) + (row * rowSpacing) + rowSpacing/2;
           
           // Ensure the plant doesn't go below the tank bottom
           const adjustedY = Math.min(y, stageHeight - 10);
@@ -345,11 +358,30 @@ export const useStore = create<EditorState>()(
             height: defaultHeight * 0.9,
             rotation: gentleRotation,
             depth: 'front',
+            carpetGroupId: carpetId
           };
           get().addElement(newElement);
         }
         
         get().pushHistory();
+      },
+      
+      // Select all elements of a specific type (e.g., all plants of the same name)
+      selectAllOfType: (name: string, carpetGroupId?: string) => {
+        const { elements } = get();
+        
+        // Filter elements by name and optionally by carpet group ID
+        const matchingElements = elements.filter(el => {
+          if (carpetGroupId) {
+            return el.name === name && el.carpetGroupId === carpetGroupId;
+          }
+          return el.name === name;
+        });
+        
+        // If we found matching elements, select the first one
+        if (matchingElements.length > 0) {
+          set({ selectedElement: matchingElements[0].id });
+        }
       },
       
       // Add clear all elements functionality

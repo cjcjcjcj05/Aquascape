@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { useStore } from "@/store/editorStore";
-import { FaCopy, FaTrashAlt, FaLayerGroup, FaThLarge } from "react-icons/fa";
+import { FaCopy, FaTrashAlt, FaLayerGroup, FaThLarge, FaObjectGroup } from "react-icons/fa";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Slider } from "@/components/ui/slider";
@@ -15,6 +15,7 @@ export default function PropertyPanel() {
   const duplicateElement = useStore(state => state.duplicateElement);
   const removeElement = useStore(state => state.removeElement);
   const createCarpet = useStore(state => state.createCarpet);
+  const selectAllOfType = useStore(state => state.selectAllOfType);
   
   const selectedElement = elements.find(el => el.id === selectedElementId);
   
@@ -193,16 +194,40 @@ export default function PropertyPanel() {
         {isCarpetingPlant && (
           <div className="mt-4">
             <h3 className="font-medium text-sm mb-2">Carpeting Options</h3>
+            <div className="space-y-2">
+              <Button
+                variant="default"
+                className="w-full flex items-center justify-center px-3 py-2 rounded text-sm"
+                onClick={() => asset && createCarpet(asset)}
+              >
+                <FaThLarge className="mr-1.5" /> Create Carpet Pattern
+              </Button>
+              {selectedElement.carpetGroupId && (
+                <Button
+                  variant="outline"
+                  className="w-full flex items-center justify-center px-3 py-2 rounded text-sm"
+                  onClick={() => selectAllOfType(selectedElement.name, selectedElement.carpetGroupId)}
+                >
+                  <FaObjectGroup className="mr-1.5" /> Select All in Carpet
+                </Button>
+              )}
+              <p className="text-xs text-muted-foreground mt-1">
+                Creates a grid of plants to form a carpet in your aquarium.
+              </p>
+            </div>
+          </div>
+        )}
+        
+        {/* Select All button for all elements (not just carpets) */}
+        {selectedElement.type === 'plants' && (
+          <div className="mt-4">
             <Button
-              variant="default"
+              variant="outline"
               className="w-full flex items-center justify-center px-3 py-2 rounded text-sm"
-              onClick={() => asset && createCarpet(asset)}
+              onClick={() => selectAllOfType(selectedElement.name)}
             >
-              <FaThLarge className="mr-1.5" /> Create Carpet Pattern
+              <FaObjectGroup className="mr-1.5" /> Select All of Same Type
             </Button>
-            <p className="text-xs text-muted-foreground mt-1">
-              Creates a grid of plants to form a carpet in your aquarium.
-            </p>
           </div>
         )}
         
