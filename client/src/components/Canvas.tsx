@@ -52,7 +52,7 @@ const CanvasElementComponent = ({
 }) => {
   const shapeRef = useRef<any>(null);
   const trRef = useRef<any>(null);
-  const [image] = useImage(element.src);
+  const [image, status] = useImage(element.src);
   
   // Update transformer on selection change
   useEffect(() => {
@@ -63,6 +63,15 @@ const CanvasElementComponent = ({
     }
   }, [isSelected]);
   
+  // Don't render the image until it's loaded
+  if (status === 'loading' || !image) {
+    return null;
+  }
+  
+  // Ensure we have valid dimensions (prevent zero width/height)
+  const width = Math.max(10, element.width || 100);
+  const height = Math.max(10, element.height || 100);
+  
   return (
     <>
       <KonvaImage
@@ -70,8 +79,8 @@ const CanvasElementComponent = ({
         image={image}
         x={element.x}
         y={element.y}
-        width={element.width}
-        height={element.height}
+        width={width}
+        height={height}
         rotation={element.rotation}
         draggable
         onClick={(e) => {

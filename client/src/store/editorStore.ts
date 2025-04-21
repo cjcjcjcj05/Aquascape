@@ -617,8 +617,9 @@ export const useStore = create<EditorState>()(
               
               // Auto-remove after 5 seconds
               setTimeout(() => {
-                if (document.getElementById('storage-quota-notification')) {
-                  document.getElementById('storage-quota-notification').remove();
+                const notification = document.getElementById('storage-quota-notification');
+                if (notification) {
+                  notification.remove();
                 }
               }, 5000);
             }
