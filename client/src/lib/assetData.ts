@@ -72,7 +72,7 @@ const hardscape: Asset[] = [
     type: "rock",
     name: "Dragonstone 1",
     description: "Tall textured porous stone with unique honeycomb patterns and striking vertical form",
-    src: "/assets/hardscape/dragonstone-1.png",
+    src: "https://images.unsplash.com/photo-1612293905840-8c1cc776fa7d?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80",
     defaultWidth: 100,
     defaultHeight: 140
   },
@@ -82,7 +82,7 @@ const hardscape: Asset[] = [
     type: "rock",
     name: "Dragonstone 2",
     description: "Wide textured porous stone with honeycomb patterns, perfect for creating terraces",
-    src: "/assets/hardscape/dragonstone-2.png",
+    src: "https://images.unsplash.com/photo-1612293905840-8c1cc776fa7d?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80",
     defaultWidth: 140,
     defaultHeight: 80
   },
