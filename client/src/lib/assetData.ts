@@ -147,8 +147,8 @@ const plants: Asset[] = [
     category: "plants",
     type: "midground",
     name: "Java Fern",
-    description: "Hardy plant",
-    src: "https://images.unsplash.com/photo-1603383977221-b2636408fbe0?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80",
+    description: "Hardy plant with distinctive wavy leaves, perfect for attaching to hardscape.",
+    src: "/assets/plants/java_fern.png",
     defaultWidth: 100,
     defaultHeight: 120
   },
