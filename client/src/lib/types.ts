@@ -9,12 +9,33 @@ export interface Asset {
   src: string;
   defaultWidth?: number;
   defaultHeight?: number;
+  color?: string; // For substrate colors
 }
 
 export interface TankDimensions {
   width: number;
   height: number;
   depth: number;
+}
+
+export interface SubstrateType {
+  id: string;
+  name: string;
+  color: string;
+  texture?: string; // Optional texture image URL
+}
+
+export interface SubstrateSettings {
+  type: string; // ID of the substrate type
+  color: string; // Active color
+  elevationPoints: ElevationPoint[]; // Control points for elevation
+  baseHeight: number; // Base height in pixels
+}
+
+export interface ElevationPoint {
+  id: string;
+  x: number; // Percentage of tank width (0-100)
+  y: number; // Height in pixels from bottom
 }
 
 export interface CanvasElement {
@@ -44,4 +65,5 @@ export interface HistoryState {
   elements: CanvasElement[];
   selectedElement: string | null;
   currentCategory: AssetCategory;
+  substrateSettings: SubstrateSettings;
 }

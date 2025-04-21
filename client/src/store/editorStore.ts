@@ -1,5 +1,12 @@
 import { create } from 'zustand';
-import { AssetCategory, CanvasElement, HistoryState, TankDimensions } from '@/lib/types';
+import { 
+  AssetCategory, 
+  CanvasElement, 
+  HistoryState, 
+  TankDimensions, 
+  SubstrateSettings, 
+  ElevationPoint
+} from '@/lib/types';
 import { persist, createJSONStorage } from 'zustand/middleware';
 
 interface EditorState {
@@ -8,6 +15,7 @@ interface EditorState {
   elements: CanvasElement[];
   selectedElement: string | null;
   currentCategory: AssetCategory;
+  substrateSettings: SubstrateSettings;
   
   // History for undo/redo
   history: HistoryState[];
@@ -19,6 +27,12 @@ interface EditorState {
   setTankDimensions: (dimensions: TankDimensions) => void;
   setSelectedElement: (id: string | null) => void;
   setCurrentCategory: (category: AssetCategory) => void;
+  setSubstrateType: (typeId: string) => void;
+  setSubstrateColor: (color: string) => void;
+  setSubstrateBaseHeight: (height: number) => void;
+  addElevationPoint: (point: Omit<ElevationPoint, "id">) => void;
+  updateElevationPoint: (id: string, point: Partial<ElevationPoint>) => void;
+  removeElevationPoint: (id: string) => void;
   addElement: (element: CanvasElement) => void;
   updateElement: (id: string, props: Partial<CanvasElement>) => void;
   removeElement: (id: string) => void;
@@ -39,6 +53,18 @@ export const useStore = create<EditorState>()(
       elements: [],
       selectedElement: null,
       currentCategory: 'substrate',
+      substrateSettings: {
+        type: 'sand-nature',
+        color: '#E9DAC1',
+        elevationPoints: [
+          { id: 'point-1', x: 0, y: 0 },
+          { id: 'point-2', x: 25, y: 10 },
+          { id: 'point-3', x: 50, y: 15 },
+          { id: 'point-4', x: 75, y: 10 },
+          { id: 'point-5', x: 100, y: 0 }
+        ],
+        baseHeight: 30
+      },
       
       // History
       history: [],
@@ -83,6 +109,90 @@ export const useStore = create<EditorState>()(
       
       setCurrentCategory: (category) => {
         set({ currentCategory: category });
+      },
+      
+      setSubstrateType: (typeId) => {
+        const { pushHistory, substrateSettings } = get();
+        pushHistory();
+        set({ 
+          substrateSettings: { 
+            ...substrateSettings, 
+            type: typeId 
+          } 
+        });
+      },
+      
+      setSubstrateColor: (color) => {
+        const { pushHistory, substrateSettings } = get();
+        pushHistory();
+        set({ 
+          substrateSettings: { 
+            ...substrateSettings, 
+            color 
+          } 
+        });
+      },
+      
+      setSubstrateBaseHeight: (baseHeight) => {
+        const { pushHistory, substrateSettings } = get();
+        pushHistory();
+        set({ 
+          substrateSettings: { 
+            ...substrateSettings, 
+            baseHeight 
+          } 
+        });
+      },
+      
+      addElevationPoint: (point) => {
+        const { pushHistory, substrateSettings } = get();
+        pushHistory();
+        const newPoint = {
+          ...point,
+          id: `point-${Date.now()}`
+        };
+        set({ 
+          substrateSettings: { 
+            ...substrateSettings, 
+            elevationPoints: [...substrateSettings.elevationPoints, newPoint]
+          } 
+        });
+      },
+      
+      updateElevationPoint: (id, pointData) => {
+        const { pushHistory, substrateSettings } = get();
+        const pointIndex = substrateSettings.elevationPoints.findIndex(p => p.id === id);
+        
+        if (pointIndex !== -1) {
+          pushHistory();
+          const updatedPoints = [...substrateSettings.elevationPoints];
+          updatedPoints[pointIndex] = {
+            ...updatedPoints[pointIndex],
+            ...pointData
+          };
+          
+          set({ 
+            substrateSettings: { 
+              ...substrateSettings, 
+              elevationPoints: updatedPoints 
+            } 
+          });
+        }
+      },
+      
+      removeElevationPoint: (id) => {
+        const { pushHistory, substrateSettings } = get();
+        // Don't remove if only 2 or fewer points remain
+        if (substrateSettings.elevationPoints.length <= 2) return;
+        
+        pushHistory();
+        const filteredPoints = substrateSettings.elevationPoints.filter(p => p.id !== id);
+        set({ 
+          substrateSettings: { 
+            ...substrateSettings, 
+            elevationPoints: filteredPoints 
+          } 
+        });
       },
       
       addElement: (element) => {
