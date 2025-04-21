@@ -22,9 +22,21 @@ import {
   FaRedo,
   FaEye,
   FaRulerCombined,
-  FaThLarge
+  FaThLarge,
+  FaTrashAlt
 } from "react-icons/fa";
 import { Button } from "@/components/ui/button";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger
+} from "@/components/ui/alert-dialog";
 
 // Custom element component with event handling
 const CanvasElementComponent = ({ 
@@ -113,12 +125,38 @@ export default function Canvas() {
     setSelectedElement, 
     addElement, 
     updateElement,
+    removeElement,
+    clearAllElements,
     undo,
     redo,
     canUndo,
     canRedo,
     substrateSettings
   } = useStore();
+  
+  // Handle keyboard events for delete and other operations
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if ((e.key === 'Delete' || e.key === 'Backspace') && selectedElement) {
+        removeElement(selectedElement);
+        toast({
+          title: "Element deleted",
+          description: "The selected element has been removed"
+        });
+      } else if (e.ctrlKey && e.key === 'z') {
+        // Undo operation
+        if (canUndo) undo();
+      } else if (e.ctrlKey && e.key === 'y') {
+        // Redo operation
+        if (canRedo) redo();
+      }
+    };
+    
+    window.addEventListener('keydown', handleKeyDown);
+    return () => {
+      window.removeEventListener('keydown', handleKeyDown);
+    };
+  }, [selectedElement, removeElement, toast, undo, redo, canUndo, canRedo]);
   
   // Calculate stage dimensions based on tank dimensions and a scale factor
   const scaleFactor = 10; // 1cm = 10px

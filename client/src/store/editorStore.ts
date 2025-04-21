@@ -40,6 +40,7 @@ interface EditorState {
   removeElement: (id: string) => void;
   duplicateElement: (id: string) => void;
   createCarpet: (asset: Asset) => void;
+  clearAllElements: () => void;
   saveProject: () => void;
   
   // History actions
@@ -254,56 +255,59 @@ export const useStore = create<EditorState>()(
       },
       
       createCarpet: (asset: Asset) => {
-        const { tankDimensions, substrateSettings } = get();
-        const gridSize = 4; // 4x4 grid
-        const spacing = 10; // Space between plants
-        
-        // Calculate plant size with spacing
-        const plantWidth = asset.defaultWidth + spacing;
-        const plantHeight = asset.defaultHeight + spacing;
-        
-        // Calculate grid dimensions based on tank size
-        const gridWidth = tankDimensions.width / gridSize;
-        
-        // Calculate scale factor (used in Canvas.tsx)
+        const { tankDimensions } = get();
         const scaleFactor = 10; // 1cm = 10px
         const stageWidth = tankDimensions.width * scaleFactor;
         const stageHeight = tankDimensions.height * scaleFactor;
         
-        // Calculate substrate's Y position
-        const baseHeight = (substrateSettings.baseHeight / 100) * stageHeight;
-        const substrateY = stageHeight - baseHeight; // Top of substrate
+        // Get the bottom 25% of the tank for placing plants
+        const bottomY = stageHeight * 0.75;
         
-        // Use height for vertical positioning
-        const scaledHeight = tankDimensions.height * scaleFactor;
+        // Create a grid of plants - 5 columns, 2 rows
+        const columns = 5;
+        const rows = 2;
         
-        // Create plants in a grid pattern across the width of the tank
-        for (let row = 0; row < 2; row++) { // Limit to 2 rows to avoid overcrowding
-          for (let col = 0; col < gridSize; col++) {
-            // The plants should be positioned on the substrate
-            // Scale down the x position proportionally
-            const xPos = (col * gridWidth + (gridWidth - plantWidth) / 2) * scaleFactor;
+        // Leave some margin on the sides
+        const margin = stageWidth * 0.1;
+        const usableWidth = stageWidth - (margin * 2);
+        
+        // Calculate spacing
+        const columnSpacing = usableWidth / columns;
+        const defaultHeight = asset.defaultHeight || 30;
+        const rowSpacing = defaultHeight * 0.7;
+        
+        // Create plants
+        for (let row = 0; row < rows; row++) {
+          for (let col = 0; col < columns; col++) {
+            // Add some randomness to positions
+            const randomOffsetX = Math.random() * 20 - 10;
+            const randomOffsetY = Math.random() * 10 - 5;
             
-            // Calculate Y position - on top of the substrate plus some random variation
-            // We divide by scaleFactor to get back from pixels to cm for our position
-            const yPos = (substrateY / scaleFactor) - plantHeight/2 - (row * plantHeight * 0.8);
+            const x = margin + (col * columnSpacing) + randomOffsetX;
+            const y = bottomY + (row * rowSpacing) + randomOffsetY;
             
             const newElement: CanvasElement = {
               id: `element-${Date.now()}-${row}-${col}`,
               type: asset.category,
               name: asset.name,
               src: asset.src,
-              x: xPos,
-              y: yPos,
-              width: asset.defaultWidth,
-              height: asset.defaultHeight,
+              x: x,
+              y: y,
+              width: asset.defaultWidth || 100,
+              height: defaultHeight,
               rotation: Math.random() * 30 - 15, // Random rotation between -15 and 15 degrees
-              depth: 'foreground',
+              depth: 'front', // Use front instead of foreground
             };
             get().addElement(newElement);
           }
         }
         
+        get().pushHistory();
+      },
+      
+      // Add clear all elements functionality
+      clearAllElements: () => {
+        set({ elements: [] });
         get().pushHistory();
       },
       
