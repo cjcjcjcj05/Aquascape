@@ -7,6 +7,7 @@ import {
   SubstrateSettings, 
   ElevationPoint
 } from '@/lib/types';
+import { getSubstrateVariant } from '@/lib/substrateData';
 import { persist, createJSONStorage } from 'zustand/middleware';
 
 interface EditorState {

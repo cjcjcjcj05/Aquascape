@@ -1,10 +1,11 @@
 import { useState, useEffect } from "react";
 import { useStore } from "@/store/editorStore";
-import { FaCopy, FaTrashAlt } from "react-icons/fa";
+import { FaCopy, FaTrashAlt, FaLayerGroup } from "react-icons/fa";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Slider } from "@/components/ui/slider";
 import { CanvasElement } from "@/lib/types";
+import { SubstrateControls } from "@/components/SubstrateControls";
 
 export default function PropertyPanel() {
   const selectedElementId = useStore(state => state.selectedElement);
@@ -16,7 +17,20 @@ export default function PropertyPanel() {
   const selectedElement = elements.find(el => el.id === selectedElementId);
   
   if (!selectedElement) {
-    return null;
+    return (
+      <aside className="w-64 bg-white border-l border-gray-200 overflow-y-auto">
+        <div className="p-4 border-b border-gray-200">
+          <h2 className="font-poppins font-semibold text-lg flex items-center">
+            <span className="mr-2 text-accent"><FaLayerGroup /></span>
+            Substrate Controls
+          </h2>
+        </div>
+        
+        <div className="p-4">
+          <SubstrateControls />
+        </div>
+      </aside>
+    );
   }
   
   const getElementIcon = (type: string) => {

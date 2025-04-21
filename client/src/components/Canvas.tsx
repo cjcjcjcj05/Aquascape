@@ -247,6 +247,7 @@ export default function Canvas() {
             {/* Substrate with elevation */}
             <Shape
               sceneFunc={(context, shape) => {
+                // Calculate substrate points
                 const points = calculateSubstratePoints();
                 context.beginPath();
                 context.moveTo(points[0], points[1]);

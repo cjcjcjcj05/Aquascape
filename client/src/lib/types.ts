@@ -18,16 +18,23 @@ export interface TankDimensions {
   depth: number;
 }
 
-export interface SubstrateType {
+export interface SubstrateVariant {
   id: string;
   name: string;
   color: string;
   texture?: string; // Optional texture image URL
 }
 
+export interface SubstrateType {
+  id: string;
+  name: string;
+  description: string;
+  variants: SubstrateVariant[];
+}
+
 export interface SubstrateSettings {
-  type: string; // ID of the substrate type
-  color: string; // Active color
+  typeId: string; // ID of the substrate type
+  variantId: string; // ID of the selected variant
   elevationPoints: ElevationPoint[]; // Control points for elevation
   baseHeight: number; // Base height in pixels
 }
