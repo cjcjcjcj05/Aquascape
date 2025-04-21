@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import { useStore } from "@/store/editorStore";
 import { ElevationPoint, SubstrateSettings } from "@/lib/types";
+import { substrateTypes, getVariantColor } from "@/lib/substrateData";
 import { 
   Tabs, 
   TabsContent, 
@@ -18,23 +19,6 @@ import { Label } from "@/components/ui/label";
 import { Slider } from "@/components/ui/slider";
 import { ColorSwatch } from "@/components/ColorSwatch";
 
-const substrateColors = {
-  sand: [
-    { name: "Sand Bright", color: "#E9DAC1" },
-    { name: "Sand Nature", color: "#D4BC94" },
-  ],
-  gravel: [
-    { name: "Gravel Gray", color: "#C4C4C4" },
-    { name: "Gravel Nature", color: "#C2B280" },
-    { name: "Gravel Nature Grained", color: "#B8A378" },
-    { name: "Gravel Nature Bright", color: "#D6C49B" },
-  ],
-  soil: [
-    { name: "Aqua Soil Dark", color: "#4D3B27" },
-    { name: "Aqua Soil Black", color: "#1E1E1E" },
-  ],
-};
-
 export function SubstrateControls() {
   const canvasRef = useRef<HTMLDivElement>(null);
   const [isDragging, setIsDragging] = useState(false);
@@ -43,7 +27,7 @@ export function SubstrateControls() {
     substrateSettings,
     tankDimensions,
     setSubstrateType,
-    setSubstrateColor,
+    setSubstrateVariant,
     setSubstrateBaseHeight,
     addElevationPoint,
     updateElevationPoint,
@@ -54,8 +38,12 @@ export function SubstrateControls() {
     setSubstrateBaseHeight(value[0]);
   };
 
-  const handleColorSelect = (color: string) => {
-    setSubstrateColor(color);
+  const handleSubstrateTypeSelect = (typeId: string) => {
+    setSubstrateType(typeId);
+  };
+
+  const handleSubstrateVariantSelect = (variantId: string) => {
+    setSubstrateVariant(variantId);
   };
 
   // Handle canvas interactions for elevation points
@@ -151,55 +139,44 @@ export function SubstrateControls() {
           <CardHeader>
             <CardTitle>Substrate Type</CardTitle>
             <CardDescription>
-              Choose the substrate type and color for your aquarium.
+              Choose the substrate type and appearance for your aquarium.
             </CardDescription>
           </CardHeader>
           <CardContent>
-            <div className="space-y-4">
-              <div>
-                <Label>Sand</Label>
-                <div className="grid grid-cols-2 gap-2 mt-2">
-                  {substrateColors.sand.map(substrate => (
-                    <ColorSwatch
-                      key={substrate.name}
-                      name={substrate.name}
-                      color={substrate.color}
-                      selected={substrateSettings.color === substrate.color}
-                      onClick={() => handleColorSelect(substrate.color)}
-                    />
-                  ))}
+            <div className="space-y-6">
+              {substrateTypes.map(type => (
+                <div key={type.id} className="space-y-2">
+                  <div className="flex items-center justify-between">
+                    <Label className="text-sm font-medium">{type.name}</Label>
+                    <button 
+                      className={`px-3 py-1 text-xs rounded-full ${substrateSettings.typeId === type.id 
+                        ? 'bg-primary text-white' 
+                        : 'bg-muted hover:bg-muted/80'}`}
+                      onClick={() => handleSubstrateTypeSelect(type.id)}
+                    >
+                      {substrateSettings.typeId === type.id ? 'Selected' : 'Select'}
+                    </button>
+                  </div>
+                  <p className="text-xs text-muted-foreground">{type.description}</p>
+                  
+                  <div className="grid grid-cols-3 gap-2 mt-2">
+                    {type.variants.map(variant => (
+                      <ColorSwatch
+                        key={variant.id}
+                        name={variant.name}
+                        color={variant.color}
+                        selected={substrateSettings.typeId === type.id && substrateSettings.variantId === variant.id}
+                        onClick={() => {
+                          if (substrateSettings.typeId !== type.id) {
+                            handleSubstrateTypeSelect(type.id);
+                          }
+                          handleSubstrateVariantSelect(variant.id);
+                        }}
+                      />
+                    ))}
+                  </div>
                 </div>
-              </div>
-              
-              <div>
-                <Label>Gravel</Label>
-                <div className="grid grid-cols-2 gap-2 mt-2">
-                  {substrateColors.gravel.map(substrate => (
-                    <ColorSwatch
-                      key={substrate.name}
-                      name={substrate.name}
-                      color={substrate.color}
-                      selected={substrateSettings.color === substrate.color}
-                      onClick={() => handleColorSelect(substrate.color)}
-                    />
-                  ))}
-                </div>
-              </div>
-              
-              <div>
-                <Label>Aqua Soil</Label>
-                <div className="grid grid-cols-2 gap-2 mt-2">
-                  {substrateColors.soil.map(substrate => (
-                    <ColorSwatch
-                      key={substrate.name}
-                      name={substrate.name}
-                      color={substrate.color}
-                      selected={substrateSettings.color === substrate.color}
-                      onClick={() => handleColorSelect(substrate.color)}
-                    />
-                  ))}
-                </div>
-              </div>
+              ))}
             </div>
           </CardContent>
         </Card>
@@ -263,7 +240,7 @@ export function SubstrateControls() {
                 {/* Substrate shape */}
                 <path
                   d={createPathFromPoints(sortedPoints, 100)}
-                  fill={substrateSettings.color}
+                  fill={getVariantColor(substrateSettings.typeId, substrateSettings.variantId)}
                   stroke="#a18a68"
                   strokeWidth="1"
                 />
