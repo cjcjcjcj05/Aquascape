@@ -17,7 +17,7 @@ function SubstrateLibrary() {
   } = useStore();
   
   return (
-    <div className="flex-1 overflow-y-auto p-3 bg-white">
+    <div className="flex-1 overflow-y-auto p-3 bg-white h-full">
       <div className="mb-4">
         <h3 className="font-medium text-sm mb-3">Substrate Types</h3>
         <p className="text-xs text-muted-foreground mb-4">
@@ -26,19 +26,8 @@ function SubstrateLibrary() {
         
         {substrateTypes.map(type => (
           <div key={type.id} className="mb-6">
-            <div className="flex items-center justify-between mb-2">
+            <div className="mb-2">
               <h4 className="font-medium">{type.name}</h4>
-              <Button
-                variant="ghost"
-                className={`px-3 py-1.5 text-xs rounded-full ${
-                  substrateSettings.typeId === type.id 
-                    ? 'bg-primary text-white' 
-                    : 'bg-muted hover:bg-muted/80'
-                }`}
-                onClick={() => setSubstrateType(type.id)}
-              >
-                {substrateSettings.typeId === type.id ? 'Selected' : 'Select All'}
-              </Button>
             </div>
             <p className="text-xs text-muted-foreground mb-3">{type.description}</p>
             
@@ -120,11 +109,17 @@ function AssetItem({ asset }: { asset: Asset }) {
       ref={drag}
       className={`cursor-grab ${isDragging ? 'opacity-50' : ''}`}
     >
-      <div className="aspect-video bg-gray-100 rounded-md overflow-hidden mb-1 border border-gray-200">
-        <img src={asset.src} alt={asset.name} className="w-full h-full object-cover" />
+      <div className="aspect-video bg-transparent rounded-md overflow-hidden mb-2 border border-gray-200">
+        <div className="w-full h-full flex items-center justify-center bg-white">
+          <img 
+            src={asset.src} 
+            alt={asset.name} 
+            className="max-w-full max-h-full object-contain p-1" 
+          />
+        </div>
       </div>
       <p className="text-sm font-medium truncate">{asset.name}</p>
-      <p className="text-xs text-ui-light">{asset.description}</p>
+      <p className="text-xs text-muted-foreground line-clamp-2">{asset.description}</p>
     </div>
   );
 }
@@ -152,7 +147,7 @@ export default function AssetLibrary() {
   });
   
   return (
-    <div className="flex-1 overflow-y-auto p-3 bg-white">
+    <div className="flex-1 overflow-y-auto p-3 bg-white h-full">
       <div className="mb-3">
         <div className="relative">
           <Input
@@ -162,19 +157,20 @@ export default function AssetLibrary() {
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
           />
-          <FaSearch className="absolute left-3 top-1/2 -translate-y-1/2 text-ui-light" />
+          <FaSearch className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" />
         </div>
       </div>
       
-      <div className="mb-3">
+      <div className="mb-4">
         <h3 className="font-medium text-sm mb-2">{currentCategory.charAt(0).toUpperCase() + currentCategory.slice(1)} Types</h3>
         <div className="flex flex-wrap gap-2">
           {types.map(type => (
             <Button
               key={type}
-              variant="ghost"
+              variant={selectedType === type ? "default" : "outline"}
+              size="sm"
               className={`px-3 py-1 rounded-full text-xs font-medium ${
-                selectedType === type ? 'bg-[#9BE36D] text-ui-dark' : 'bg-gray-100 text-ui-dark hover:bg-gray-200'
+                selectedType === type ? 'bg-primary text-primary-foreground' : ''
               }`}
               onClick={() => setSelectedType(type)}
             >
@@ -184,7 +180,7 @@ export default function AssetLibrary() {
         </div>
       </div>
       
-      <div className="grid grid-cols-2 gap-3">
+      <div className="grid grid-cols-2 gap-4">
         {filteredAssets.map((asset) => (
           <AssetItem key={asset.id} asset={asset} />
         ))}
