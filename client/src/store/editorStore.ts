@@ -254,7 +254,7 @@ export const useStore = create<EditorState>()(
       },
       
       createCarpet: (asset: Asset) => {
-        const { tankDimensions } = get();
+        const { tankDimensions, substrateSettings } = get();
         const gridSize = 4; // 4x4 grid
         const spacing = 10; // Space between plants
         
@@ -264,18 +264,37 @@ export const useStore = create<EditorState>()(
         
         // Calculate grid dimensions based on tank size
         const gridWidth = tankDimensions.width / gridSize;
-        const gridHeight = tankDimensions.depth / gridSize;
         
-        // Create plants in a grid pattern
-        for (let row = 0; row < gridSize; row++) {
+        // Calculate scale factor (used in Canvas.tsx)
+        const scaleFactor = 10; // 1cm = 10px
+        const stageWidth = tankDimensions.width * scaleFactor;
+        const stageHeight = tankDimensions.height * scaleFactor;
+        
+        // Calculate substrate's Y position
+        const baseHeight = (substrateSettings.baseHeight / 100) * stageHeight;
+        const substrateY = stageHeight - baseHeight; // Top of substrate
+        
+        // Use height for vertical positioning
+        const scaledHeight = tankDimensions.height * scaleFactor;
+        
+        // Create plants in a grid pattern across the width of the tank
+        for (let row = 0; row < 2; row++) { // Limit to 2 rows to avoid overcrowding
           for (let col = 0; col < gridSize; col++) {
+            // The plants should be positioned on the substrate
+            // Scale down the x position proportionally
+            const xPos = (col * gridWidth + (gridWidth - plantWidth) / 2) * scaleFactor;
+            
+            // Calculate Y position - on top of the substrate plus some random variation
+            // We divide by scaleFactor to get back from pixels to cm for our position
+            const yPos = (substrateY / scaleFactor) - plantHeight/2 - (row * plantHeight * 0.8);
+            
             const newElement: CanvasElement = {
               id: `element-${Date.now()}-${row}-${col}`,
               type: asset.category,
               name: asset.name,
               src: asset.src,
-              x: col * gridWidth + (gridWidth - plantWidth) / 2,
-              y: row * gridHeight + (gridHeight - plantHeight) / 2,
+              x: xPos,
+              y: yPos,
               width: asset.defaultWidth,
               height: asset.defaultHeight,
               rotation: Math.random() * 30 - 15, // Random rotation between -15 and 15 degrees
