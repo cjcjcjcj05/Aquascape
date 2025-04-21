@@ -25,18 +25,9 @@ export default function Editor() {
   const addElement = useStore(state => state.addElement);
   
   // Fetch design data if we have an ID
-  const { data: design, isLoading, isError, error } = useQuery<Design>({
+  const { data: design, isLoading } = useQuery<Design>({
     queryKey: ['/api/designs', designId],
     enabled: !!designId,
-    retry: 1,
-    // Show proper error handling
-    onError: (err) => {
-      toast({
-        title: "Error Loading Design",
-        description: `${err instanceof Error ? err.message : "Failed to load design"}`,
-        variant: "destructive"
-      });
-    }
   });
   
   // Load design when data is fetched
