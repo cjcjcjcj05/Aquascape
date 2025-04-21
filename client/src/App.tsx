@@ -27,9 +27,9 @@ export default function App() {
       <AuthProvider>
         <DndProvider backend={HTML5Backend}>
           <TooltipProvider>
-            <div className="h-screen flex flex-col overflow-hidden">
+            <div className="min-h-screen flex flex-col">
               <Header />
-              <main className="flex-1 overflow-hidden">
+              <main className="flex-1 overflow-auto">
                 <Switch>
                   <Route path="/" component={Home} />
                   <ProtectedRoute path="/editor" component={Editor} />
