@@ -95,17 +95,15 @@ export default function AssetGeneratorPage() {
   const watchStyle = form.watch("style");
   
   // Update prompt when category or style changes
-  useState(() => {
-    const subscription = form.watch((value, { name }) => {
-      if (name === "category" || name === "style") {
-        const newPrompt = updatePrompt(
-          value.category as AssetCategory, 
-          value.style as string
-        );
-        form.setValue("prompt", newPrompt);
-      }
-    });
-    return () => subscription.unsubscribe();
+  // Use the form.watch directly for category and style changes
+  form.watch((value, { name }) => {
+    if (name === "category" || name === "style") {
+      const newPrompt = updatePrompt(
+        value.category as AssetCategory, 
+        value.style as string
+      );
+      form.setValue("prompt", newPrompt);
+    }
   });
 
   // Form submission handler
