@@ -107,8 +107,8 @@ const plants: Asset[] = [
     name: "Eleocharis acicularis 'Mini'",
     description: "Delicate, grass-like carpeting plant perfect for creating natural foreground lawns.",
     src: "/assets/plants/eleocharis_mini.png",
-    defaultWidth: 120,
-    defaultHeight: 40,
+    defaultWidth: 140,
+    defaultHeight: 60,
     isCarpeting: true
   },
   {
