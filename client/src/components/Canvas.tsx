@@ -462,6 +462,46 @@ export default function Canvas() {
             Toggle Grid
           </div>
         </div>
+        
+        {/* Clear All Button with Confirmation Dialog */}
+        <AlertDialog>
+          <AlertDialogTrigger asChild>
+            <div className="relative group">
+              <Button
+                variant="outline"
+                size="icon"
+                className="w-10 h-10 rounded-md bg-white hover:bg-gray-100 text-red-500 border border-gray-200"
+              >
+                <FaTrashAlt />
+              </Button>
+              <div className="absolute right-full mr-2 top-1/2 -translate-y-1/2 hidden group-hover:block bg-gray-800 text-white text-xs rounded py-1 px-2 whitespace-nowrap">
+                Clear All
+              </div>
+            </div>
+          </AlertDialogTrigger>
+          <AlertDialogContent>
+            <AlertDialogHeader>
+              <AlertDialogTitle>Are you sure?</AlertDialogTitle>
+              <AlertDialogDescription>
+                This will remove all elements from your aquascape. This action cannot be undone.
+              </AlertDialogDescription>
+            </AlertDialogHeader>
+            <AlertDialogFooter>
+              <AlertDialogCancel>Cancel</AlertDialogCancel>
+              <AlertDialogAction 
+                onClick={() => {
+                  clearAllElements();
+                  toast({
+                    title: "Cleared All Elements",
+                    description: "All elements have been removed from your aquascape.",
+                  });
+                }}
+              >
+                Clear All
+              </AlertDialogAction>
+            </AlertDialogFooter>
+          </AlertDialogContent>
+        </AlertDialog>
       </div>
     </main>
   );

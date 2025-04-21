@@ -196,7 +196,7 @@ export function SubstrateControls() {
                 <div className="flex justify-between mb-2">
                   <Label>Height</Label>
                   <span className="text-sm text-muted-foreground">
-                    {substrateSettings.baseHeight}%
+                    {(substrateSettings.baseHeight * tankDimensions.height / 100 * 0.393701).toFixed(1)} in ({substrateSettings.baseHeight}%)
                   </span>
                 </div>
                 <Slider
