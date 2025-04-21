@@ -50,41 +50,11 @@ const assetData: Asset[] = [
     id: "6",
     category: "plants",
     type: "foreground",
-    name: "Monte Carlo",
-    description: "Low-growing carpeting plant with small round leaves, creates lush green foreground.",
-    src: "/assets/plants/monte_carlo.png",
+    name: "Eleocharis acicularis 'Mini'",
+    description: "A dwarf variety of hairgrass with fine, bright green needle-like leaves, ideal for creating lush carpets in the foreground of aquascapes.",
+    src: "/assets/plants/eleocharis_mini.png",
     defaultWidth: 150,
-    defaultHeight: 80
-  },
-  {
-    id: "7",
-    category: "plants",
-    type: "midground",
-    name: "Anubias",
-    description: "Hardy plant with broad, dark green leaves, can be attached to hardscape.",
-    src: "/assets/plants/anubias.png",
-    defaultWidth: 150,
-    defaultHeight: 120
-  },
-  {
-    id: "8",
-    category: "plants",
-    type: "moss",
-    name: "Java Moss",
-    description: "Versatile moss that can be attached to any surface, creating natural texture.",
-    src: "/assets/plants/java_moss.png",
-    defaultWidth: 120,
-    defaultHeight: 100
-  },
-  {
-    id: "9",
-    category: "plants",
-    type: "background",
-    name: "Amazon Sword",
-    description: "Large broad-leafed plant perfect for tank backgrounds, adds dramatic height.",
-    src: "/assets/plants/amazon_sword.png",
-    defaultWidth: 180,
-    defaultHeight: 220
+    defaultHeight: 50
   },
   
   // Fish assets

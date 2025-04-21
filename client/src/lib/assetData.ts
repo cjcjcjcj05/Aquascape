@@ -94,101 +94,11 @@ const plants: Asset[] = [
     id: "plant-1",
     category: "plants",
     type: "foreground",
-    name: "Dwarf Hairgrass",
-    description: "Carpet plant",
-    src: "https://images.unsplash.com/photo-1643306963178-9ec148e8c2e6?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80",
-    defaultWidth: 100,
-    defaultHeight: 50
-  },
-  {
-    id: "plant-2",
-    category: "plants",
-    type: "midground",
-    name: "Anubias Nana",
-    description: "Hardy plant with broad, dark green leaves, can be attached to hardscape.",
-    src: "/assets/plants/anubias.png",
-    defaultWidth: 80,
-    defaultHeight: 70
-  },
-  {
-    id: "plant-3",
-    category: "plants",
-    type: "background",
-    name: "Amazon Sword",
-    description: "Large broad-leafed plant perfect for tank backgrounds, adds dramatic height.",
-    src: "/assets/plants/amazon_sword.png",
-    defaultWidth: 120,
-    defaultHeight: 180
-  },
-  {
-    id: "plant-4",
-    category: "plants",
-    type: "midground",
-    name: "Java Fern",
-    description: "Hardy plant",
-    src: "https://images.unsplash.com/photo-1603383977221-b2636408fbe0?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80",
-    defaultWidth: 100,
-    defaultHeight: 120
-  },
-  {
-    id: "plant-5",
-    category: "plants",
-    type: "background",
-    name: "Vallisneria",
-    description: "Tall grassy",
-    src: "https://images.unsplash.com/photo-1604335399105-a0c585fd81fc?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80",
-    defaultWidth: 80,
-    defaultHeight: 200
-  },
-  {
-    id: "plant-6",
-    category: "plants",
-    type: "foreground",
-    name: "Monte Carlo",
-    description: "Low-growing carpeting plant with small round leaves, creates lush green foreground.",
-    src: "/assets/plants/monte_carlo.png",
+    name: "Eleocharis acicularis 'Mini'",
+    description: "A dwarf variety of hairgrass with fine, bright green needle-like leaves, ideal for creating lush carpets in the foreground of aquascapes.",
+    src: "/assets/plants/eleocharis_mini.png",
     defaultWidth: 150,
-    defaultHeight: 30
-  },
-  {
-    id: "plant-7",
-    category: "plants",
-    type: "midground",
-    name: "Alternanthera Reineckii",
-    description: "Red plant",
-    src: "https://images.unsplash.com/photo-1601479604588-68d9e6d386b6?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80",
-    defaultWidth: 90,
-    defaultHeight: 120
-  },
-  {
-    id: "plant-8",
-    category: "plants",
-    type: "midground",
-    name: "Cryptocoryne Wendtii",
-    description: "Versatile plant",
-    src: "https://images.unsplash.com/photo-1603383977086-2fb8af9c10c1?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80",
-    defaultWidth: 90,
-    defaultHeight: 100
-  },
-  {
-    id: "plant-9",
-    category: "plants",
-    type: "background",
-    name: "Rotala Rotundifolia",
-    description: "Stem plant",
-    src: "https://images.unsplash.com/photo-1597301882048-edfa0069d982?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80",
-    defaultWidth: 70,
-    defaultHeight: 160
-  },
-  {
-    id: "plant-10",
-    category: "plants",
-    type: "midground",
-    name: "Bucephalandra",
-    description: "Slow growing",
-    src: "https://images.unsplash.com/photo-1613763467024-8c4782e542c6?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80",
-    defaultWidth: 80,
-    defaultHeight: 70
+    defaultHeight: 50
   }
 ];
 
