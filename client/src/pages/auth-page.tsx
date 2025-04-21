@@ -88,7 +88,21 @@ export default function AuthPage() {
 
   const onLoginSubmit = (values: LoginFormValues) => {
     setLoginError(null);
-    loginMutation.mutate(values);
+    try {
+      loginMutation.mutate(values, {
+        onError: (error: Error) => {
+          console.error("Login submission error:", error);
+          setLoginError(error.message || "Invalid username or password");
+        }
+      });
+    } catch (error) {
+      console.error("Login error:", error);
+      if (error instanceof Error) {
+        setLoginError(error.message);
+      } else {
+        setLoginError("An unexpected error occurred. Please try again.");
+      }
+    }
   };
 
   const onRegisterSubmit = (values: RegisterFormValues) => {
@@ -163,13 +177,17 @@ export default function AuthPage() {
                             </FormControl>
                             <FormMessage />
                             <div className="pt-1 text-right">
-                              <Button 
-                                variant="link" 
-                                className="p-0 h-auto text-sm"
-                                onClick={() => navigate("/forgot-password")}
+                              <span 
+                                className="text-sm text-primary hover:underline cursor-pointer"
+                                onClick={(e) => {
+                                  e.preventDefault();
+                                  e.stopPropagation();
+                                  setLoginError(null);
+                                  navigate("/forgot-password");
+                                }}
                               >
                                 Forgot password?
-                              </Button>
+                              </span>
                             </div>
                           </FormItem>
                         )}
