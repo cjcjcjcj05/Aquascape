@@ -7,8 +7,8 @@ const substrates: Asset[] = [
     category: "substrate",
     type: "sand",
     name: "Sand Nature",
-    description: "Fine grain",
-    src: "https://images.unsplash.com/photo-1595880375954-07d9bb25e799?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80",
+    description: "Soft beige natural sand, perfect for bottom-dwelling fish and shrimp.",
+    src: "/assets/substrate/sand_nature.png",
     defaultWidth: 300,
     defaultHeight: 50
   },
@@ -17,8 +17,8 @@ const substrates: Asset[] = [
     category: "substrate",
     type: "gravel",
     name: "Gravel Gray",
-    description: "Medium grain",
-    src: "https://images.unsplash.com/photo-1580501170888-80668882ca0c?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80",
+    description: "Fine gray aquarium gravel with natural appearance, ideal for planted tanks.",
+    src: "/assets/substrate/gravel_gray.png",
     defaultWidth: 300,
     defaultHeight: 50
   },
@@ -71,8 +71,8 @@ const hardscape: Asset[] = [
     category: "hardscape",
     type: "rock",
     name: "Dragon Stone",
-    description: "Textured rock",
-    src: "https://images.unsplash.com/photo-1538300342682-cf57afb97271?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80",
+    description: "Textured porous stone with unique honeycomb patterns",
+    src: "/assets/hardscape/dragon_stone.png",
     defaultWidth: 100,
     defaultHeight: 80
   },
@@ -121,8 +121,8 @@ const hardscape: Asset[] = [
     category: "hardscape",
     type: "wood",
     name: "Driftwood",
-    description: "Natural shape",
-    src: "https://images.unsplash.com/photo-1560694882-ebb292fa7bf3?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80",
+    description: "Natural driftwood piece with interesting shape, perfect for aquascaping focal points.",
+    src: "/assets/hardscape/driftwood.png",
     defaultWidth: 200,
     defaultHeight: 120
   },
