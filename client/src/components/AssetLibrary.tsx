@@ -17,7 +17,7 @@ function SubstrateLibrary() {
   } = useStore();
   
   return (
-    <div className="p-4">
+    <div className="h-full overflow-y-auto p-4">
       <div className="mb-4">
         <h3 className="font-medium text-sm mb-3">Substrate Types</h3>
         <p className="text-xs text-muted-foreground mb-4">
@@ -147,43 +147,47 @@ export default function AssetLibrary() {
   });
   
   return (
-    <div className="p-4">
-      <div className="mb-3">
-        <div className="relative">
-          <Input
-            type="text"
-            placeholder={`Search ${currentCategory}...`}
-            className="w-full pl-9 pr-3 py-2 bg-gray-50 border border-gray-200 rounded-md text-sm"
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-          />
-          <FaSearch className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" />
+    <div className="h-full flex flex-col">
+      <div className="p-4 pb-2">
+        <div className="mb-3">
+          <div className="relative">
+            <Input
+              type="text"
+              placeholder={`Search ${currentCategory}...`}
+              className="w-full pl-9 pr-3 py-2 bg-gray-50 border border-gray-200 rounded-md text-sm"
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+            />
+            <FaSearch className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" />
+          </div>
+        </div>
+        
+        <div className="mb-4">
+          <h3 className="font-medium text-sm mb-2">{currentCategory.charAt(0).toUpperCase() + currentCategory.slice(1)} Types</h3>
+          <div className="flex flex-wrap gap-2">
+            {types.map(type => (
+              <Button
+                key={type}
+                variant={selectedType === type ? "default" : "outline"}
+                size="sm"
+                className={`px-3 py-1 rounded-full text-xs font-medium ${
+                  selectedType === type ? 'bg-primary text-primary-foreground' : ''
+                }`}
+                onClick={() => setSelectedType(type)}
+              >
+                {type.charAt(0).toUpperCase() + type.slice(1)}
+              </Button>
+            ))}
+          </div>
         </div>
       </div>
       
-      <div className="mb-4">
-        <h3 className="font-medium text-sm mb-2">{currentCategory.charAt(0).toUpperCase() + currentCategory.slice(1)} Types</h3>
-        <div className="flex flex-wrap gap-2">
-          {types.map(type => (
-            <Button
-              key={type}
-              variant={selectedType === type ? "default" : "outline"}
-              size="sm"
-              className={`px-3 py-1 rounded-full text-xs font-medium ${
-                selectedType === type ? 'bg-primary text-primary-foreground' : ''
-              }`}
-              onClick={() => setSelectedType(type)}
-            >
-              {type.charAt(0).toUpperCase() + type.slice(1)}
-            </Button>
+      <div className="flex-1 overflow-y-auto px-4 pb-4">
+        <div className="grid grid-cols-2 gap-4">
+          {filteredAssets.map((asset) => (
+            <AssetItem key={asset.id} asset={asset} />
           ))}
         </div>
-      </div>
-      
-      <div className="grid grid-cols-2 gap-4">
-        {filteredAssets.map((asset) => (
-          <AssetItem key={asset.id} asset={asset} />
-        ))}
       </div>
     </div>
   );
