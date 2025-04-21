@@ -12,7 +12,6 @@ import {
   sendPasswordResetEmail, 
   sendVerificationEmail
 } from "./emailService";
-import { generateImage, generateDescription } from "./ai";
 
 // Middleware to check if user is authenticated
 const isAuthenticated = (req: Request, res: Response, next: NextFunction) => {
@@ -290,70 +289,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  // Asset generation API (admin/developer only)
-  app.post('/api/generate-asset', isAuthenticated, async (req: Request, res: Response) => {
-    try {
-      // Check if user is authorized to access this feature (admin check)
-      // For now, we'll restrict to specific user IDs as we don't have admin roles yet
-      const authorizedUserIds = [1]; // Add additional admin user IDs here
-      if (!authorizedUserIds.includes(req.user?.id)) {
-        return res.status(403).json({ 
-          message: 'You are not authorized to access this feature. The Asset Generator is only available to admin users.'
-        });
-      }
-      
-      // Define validation schema for asset generation
-      const generateAssetSchema = z.object({
-        name: z.string().min(2).max(50),
-        category: z.enum(["plants", "hardscape", "fish", "substrate"]),
-        description: z.string().min(10).max(500),
-        prompt: z.string().min(10).max(1000),
-        style: z.enum(["realistic", "artistic", "simple"]),
-        backgroundColor: z.enum(["transparent", "white", "gradient"]),
-      });
-      
-      // Validate the request body
-      const validationResult = generateAssetSchema.safeParse(req.body);
-      if (!validationResult.success) {
-        return res.status(400).json({ 
-          message: 'Invalid asset generation data', 
-          errors: validationResult.error.errors 
-        });
-      }
-      
-      const { name, category, description, prompt, style, backgroundColor } = validationResult.data;
-      
-      // Generate image with OpenAI
-      const imageUrl = await generateImage({
-        prompt,
-        style,
-        backgroundColor
-      });
-      
-      // Generate enhanced description if needed
-      let finalDescription = description;
-      if (description.length < 100) {
-        try {
-          finalDescription = await generateDescription(name, category, description);
-        } catch (error) {
-          console.error("Error generating enhanced description:", error);
-          // Continue with the original description if generation fails
-        }
-      }
-      
-      // Return the generated asset info
-      res.json({
-        name,
-        category,
-        description: finalDescription,
-        imageUrl,
-        createdAt: new Date().toISOString()
-      });
-    } catch (error) {
-      console.error("Asset generation error:", error);
-      res.status(500).json({ message: 'Failed to generate asset' });
-    }
-  });
+  // Asset generation API removed
 
   const httpServer = createServer(app);
   return httpServer;
