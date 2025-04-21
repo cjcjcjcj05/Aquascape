@@ -1,11 +1,12 @@
 import { useState, useEffect } from "react";
 import { useStore } from "@/store/editorStore";
-import { FaCopy, FaTrashAlt, FaLayerGroup } from "react-icons/fa";
+import { FaCopy, FaTrashAlt, FaLayerGroup, FaThLarge } from "react-icons/fa";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Slider } from "@/components/ui/slider";
-import { CanvasElement } from "@/lib/types";
+import { CanvasElement, Asset } from "@/lib/types";
 import { SubstrateControls } from "@/components/SubstrateControls";
+import { getAssetById } from "@/lib/assetData";
 
 export default function PropertyPanel() {
   const selectedElementId = useStore(state => state.selectedElement);
@@ -13,6 +14,7 @@ export default function PropertyPanel() {
   const updateElement = useStore(state => state.updateElement);
   const duplicateElement = useStore(state => state.duplicateElement);
   const removeElement = useStore(state => state.removeElement);
+  const createCarpet = useStore(state => state.createCarpet);
   
   const selectedElement = elements.find(el => el.id === selectedElementId);
   
@@ -32,6 +34,14 @@ export default function PropertyPanel() {
       </aside>
     );
   }
+  
+  // Check if the selected element is a carpeting plant
+  // This involves finding the original asset by name
+  const assetId = selectedElement.type === 'plants' ? 
+    elements.find(el => el.id === selectedElementId)?.name : null;
+  
+  const asset = assetId ? getAssetById(selectedElement.name) : null;
+  const isCarpetingPlant = asset?.isCarpeting || false;
   
   const getElementIcon = (type: string) => {
     switch (type) {
@@ -176,6 +186,23 @@ export default function PropertyPanel() {
             </div>
           </div>
         </div>
+        
+        {/* Carpet feature for carpeting plants */}
+        {isCarpetingPlant && (
+          <div className="mt-4">
+            <h3 className="font-medium text-sm mb-2">Carpeting Options</h3>
+            <Button
+              variant="default"
+              className="w-full flex items-center justify-center px-3 py-2 rounded text-sm"
+              onClick={() => asset && createCarpet(asset)}
+            >
+              <FaThLarge className="mr-1.5" /> Create Carpet Pattern
+            </Button>
+            <p className="text-xs text-muted-foreground mt-1">
+              Creates a grid of plants to form a carpet in your aquarium.
+            </p>
+          </div>
+        )}
         
         {/* Actions */}
         <div className="mt-6 grid grid-cols-2 gap-2">
