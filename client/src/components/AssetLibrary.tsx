@@ -26,33 +26,25 @@ function SubstrateLibrary() {
            borderRadius: '4px'
          }}>
       <div className="mb-4">
-        <h3 className="font-medium text-sm mb-3">Substrate Types</h3>
         <p className="text-xs text-muted-foreground mb-4">
           Click on a substrate option to apply it to your aquarium.
         </p>
         
-        {substrateTypes.map(type => (
-          <div key={type.id} className="mb-6">
-            <div className="mb-2">
-              <h4 className="font-medium">{type.name}</h4>
-            </div>
-            <p className="text-xs text-muted-foreground mb-3">{type.description}</p>
-            
-            <div className="grid grid-cols-2 gap-3">
-              {type.variants.map(variant => (
-                <SubstrateVariantItem
-                  key={variant.id}
-                  typeId={type.id}
-                  variant={variant}
-                  isSelected={
-                    substrateSettings.typeId === type.id &&
-                    substrateSettings.variantId === variant.id
-                  }
-                />
-              ))}
-            </div>
-          </div>
-        ))}
+        <div className="grid grid-cols-2 gap-3">
+          {substrateTypes.flatMap(type => 
+            type.variants.map(variant => (
+              <SubstrateVariantItem
+                key={variant.id}
+                typeId={type.id}
+                variant={variant}
+                isSelected={
+                  substrateSettings.typeId === type.id &&
+                  substrateSettings.variantId === variant.id
+                }
+              />
+            ))
+          )}
+        </div>
       </div>
     </div>
   );
