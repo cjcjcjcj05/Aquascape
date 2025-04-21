@@ -78,7 +78,7 @@ export default function Sidebar() {
       )}
       
       {/* Content Area - Flexible Height with Scrolling */}
-      <div className="grow overflow-auto">
+      <div className="grow overflow-auto" style={{ maxHeight: 'calc(100vh - 250px)' }}>
         {activeTab === 'library' ? (
           <AssetLibrary />
         ) : (

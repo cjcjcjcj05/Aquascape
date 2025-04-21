@@ -17,7 +17,14 @@ function SubstrateLibrary() {
   } = useStore();
   
   return (
-    <div className="h-full overflow-y-auto overflow-x-hidden p-4 scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-gray-100">
+    <div className="h-full overflow-y-auto overflow-x-hidden p-4" 
+         style={{ 
+           overflowY: 'auto', 
+           height: '100%', 
+           maxHeight: '60vh',
+           border: '1px solid #eaeaea',
+           borderRadius: '4px'
+         }}>
       <div className="mb-4">
         <h3 className="font-medium text-sm mb-3">Substrate Types</h3>
         <p className="text-xs text-muted-foreground mb-4">
@@ -182,7 +189,16 @@ export default function AssetLibrary() {
         </div>
       </div>
       
-      <div className="flex-1 overflow-y-auto overflow-x-hidden px-4 pb-4 scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-gray-100">
+      <div 
+        style={{ 
+          overflowY: 'auto', 
+          maxHeight: '60vh',
+          border: '1px solid #eaeaea',
+          borderRadius: '4px',
+          padding: '1rem',
+          margin: '0 1rem 1rem'
+        }}
+      >
         <div className="grid grid-cols-2 gap-4">
           {filteredAssets.map((asset) => (
             <AssetItem key={asset.id} asset={asset} />
