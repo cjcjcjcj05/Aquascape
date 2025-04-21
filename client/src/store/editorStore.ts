@@ -255,42 +255,52 @@ export const useStore = create<EditorState>()(
       },
       
       createCarpet: (asset: Asset) => {
-        const { tankDimensions } = get();
+        const { tankDimensions, substrateSettings } = get();
         const scaleFactor = 10; // 1cm = 10px
         const stageWidth = tankDimensions.width * scaleFactor;
         const stageHeight = tankDimensions.height * scaleFactor;
         
-        // Get the bottom 20% of the tank for placing plants
-        const bottomY = stageHeight * 0.8;
+        // Calculate the actual substrate height based on the percentage
+        const substrateBaseHeight = (substrateSettings.baseHeight / 100) * stageHeight;
         
-        // Create an ordered 8×4 grid of plants as requested
-        const columns = 8;
-        const rows = 4;
+        // Position where the substrate starts (bottom of the tank minus substrate height)
+        const substrateY = stageHeight - substrateBaseHeight;
         
-        // Slight margin on each side for a more natural look
-        const margin = stageWidth * 0.05;
+        // Create a denser grid
+        const columns = 14;
+        const rows = 5;
+        
+        // Minimal margin to ensure full coverage
+        const margin = 10; // Just 10px margin
         const usableWidth = stageWidth - (margin * 2);
         
-        // Calculate spacing
-        const columnSpacing = usableWidth / columns;
+        // Calculate spacing - slightly overlap plants for a denser look
+        const columnSpacing = usableWidth / (columns - 1); // Subtract 1 to ensure full coverage
         const defaultHeight = asset.defaultHeight || 30;
-        const rowSpacing = defaultHeight * 0.8; // Some overlap to look connected
+        const defaultWidth = asset.defaultWidth || 100;
+        const rowSpacing = defaultHeight * 0.65; // More overlap for density
         
         const timestamp = Date.now(); // Use same timestamp for batch to avoid duplicate IDs
         
-        // Create plants in a grid pattern
+        // First layer: Create a solid base of plants
         for (let row = 0; row < rows; row++) {
           for (let col = 0; col < columns; col++) {
-            // Add slight randomness to positions (not too wild)
-            const randomOffsetX = Math.random() * 10 - 5; // ±5px
-            const randomOffsetY = Math.random() * 8 - 4;  // ±4px
+            // Minimal randomness for a clean, organized look
+            const randomOffsetX = Math.random() * 8 - 4; // ±4px
+            const randomOffsetY = Math.random() * 6 - 3; // ±3px
             const randomScale = 0.9 + (Math.random() * 0.2); // 0.9 to 1.1 (subtle variation)
             
+            // Calculate position - ensure plants are positioned ON the substrate
             const x = margin + (col * columnSpacing) + randomOffsetX;
-            const y = bottomY + (row * rowSpacing) + randomOffsetY;
             
-            // Gentle rotation (-20 to +20 degrees) to look natural but not wild
-            const gentleRotation = Math.random() * 40 - 20;
+            // Position vertically from the substrate upward - plants further from viewer are higher up
+            const y = substrateY - (defaultHeight * 0.7) + (row * rowSpacing) + randomOffsetY;
+            
+            // Ensure the plant doesn't go below the tank bottom
+            const adjustedY = Math.min(y, stageHeight - 10);
+            
+            // Gentle rotation (-15 to +15 degrees) for a more organized look
+            const gentleRotation = Math.random() * 30 - 15;
             
             const newElement: CanvasElement = {
               id: `element-${timestamp}-${row}-${col}`,
@@ -298,8 +308,8 @@ export const useStore = create<EditorState>()(
               name: asset.name,
               src: asset.src,
               x: x,
-              y: y,
-              width: (asset.defaultWidth || 100) * randomScale,
+              y: adjustedY,
+              width: defaultWidth * randomScale,
               height: defaultHeight * randomScale,
               rotation: gentleRotation,
               depth: 'front',
@@ -308,28 +318,31 @@ export const useStore = create<EditorState>()(
           }
         }
         
-        // Add only a few extra plants in the gaps for a fuller look
-        // But not too many to keep it orderly
-        for (let i = 0; i < 5; i++) {
-          // Place these mostly along edges or between rows
-          const col = Math.floor(Math.random() * (columns + 1));
-          const row = Math.floor(Math.random() * (rows + 1)) - 0.5;
+        // Second layer: Fill any visible gaps with additional plants
+        // Focus on edges and areas between main grid plants
+        for (let i = 0; i < 10; i++) {
+          // Position strategically to fill gaps
+          const col = Math.random() * (columns - 1);
+          const row = Math.random() * (rows - 1);
           
-          const x = margin + (col * columnSpacing);
-          const y = bottomY + (row * rowSpacing);
+          const x = margin + (col * columnSpacing) + columnSpacing/2; // Place between columns
+          const y = substrateY - (defaultHeight * 0.7) + (row * rowSpacing) + rowSpacing/2; // Place between rows
           
-          // Gentle rotation just like the main grid
-          const gentleRotation = Math.random() * 40 - 20;
+          // Ensure the plant doesn't go below the tank bottom
+          const adjustedY = Math.min(y, stageHeight - 10);
+          
+          // Gentle rotation like the main grid
+          const gentleRotation = Math.random() * 30 - 15;
           
           const newElement: CanvasElement = {
-            id: `element-${timestamp}-extra-${i}`,
+            id: `element-${timestamp}-fill-${i}`,
             type: asset.category,
             name: asset.name,
             src: asset.src,
             x: x,
-            y: y,
-            width: asset.defaultWidth || 100,
-            height: defaultHeight,
+            y: adjustedY,
+            width: defaultWidth * 0.9, // Slightly smaller to fit in gaps
+            height: defaultHeight * 0.9,
             rotation: gentleRotation,
             depth: 'front',
           };
