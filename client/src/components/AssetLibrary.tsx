@@ -70,16 +70,7 @@ function SubstrateLibrary() {
         </div>
       </div>
       
-      <div 
-        style={{ 
-          overflowY: 'auto', 
-          maxHeight: '60vh',
-          border: '1px solid #eaeaea',
-          borderRadius: '4px',
-          padding: '1rem',
-          margin: '0 1rem 1rem'
-        }}
-      >
+      <div className="px-4 pb-4 flex-1 overflow-y-auto">
         <div className="mb-3">
           <p className="text-xs text-muted-foreground">
             Click on a substrate option to apply it to your aquarium.
@@ -235,16 +226,7 @@ export default function AssetLibrary() {
         </div>
       </div>
       
-      <div 
-        style={{ 
-          overflowY: 'auto', 
-          maxHeight: '60vh',
-          border: '1px solid #eaeaea',
-          borderRadius: '4px',
-          padding: '1rem',
-          margin: '0 1rem 1rem'
-        }}
-      >
+      <div className="px-4 pb-4 flex-1 overflow-y-auto">
         <div className="grid grid-cols-2 gap-4">
           {filteredAssets.map((asset) => (
             <AssetItem key={asset.id} asset={asset} />
