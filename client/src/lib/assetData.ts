@@ -85,6 +85,16 @@ const hardscape: Asset[] = [
     src: "/assets/hardscape/dragonstone-2.png",
     defaultWidth: 140,
     defaultHeight: 80
+  },
+  {
+    id: "hardscape-seiryu-1",
+    category: "hardscape",
+    type: "rock",
+    name: "Blue Seiryu Stone 1",
+    description: "Dramatic angular stone with layered textures and deep blue-gray coloration",
+    src: "/assets/hardscape/blue_seiryu_1.png",
+    defaultWidth: 120,
+    defaultHeight: 160
   }
 ];
 
