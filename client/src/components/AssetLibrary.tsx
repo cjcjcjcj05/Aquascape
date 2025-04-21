@@ -4,7 +4,7 @@ import { useDrag } from "react-dnd";
 import { Asset, AssetCategory } from "@/lib/types";
 import { getAssetsByCategory } from "@/lib/assetData";
 import { substrateTypes } from "@/lib/substrateData";
-import { FaSearch } from "react-icons/fa";
+import { FaSearch, FaThLarge } from "react-icons/fa";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 
@@ -154,23 +154,39 @@ function AssetItem({ asset }: { asset: Asset }) {
       isDragging: !!monitor.isDragging(),
     }),
   }));
+
+  const createCarpet = useStore(state => state.createCarpet);
   
   return (
-    <div 
-      ref={drag}
-      className={`cursor-grab ${isDragging ? 'opacity-50' : ''}`}
-    >
-      <div className="aspect-video bg-transparent rounded-md overflow-hidden mb-2 border border-gray-200">
-        <div className="w-full h-full flex items-center justify-center bg-white">
-          <img 
-            src={asset.src} 
-            alt={asset.name} 
-            className="max-w-full max-h-full object-contain p-1" 
-          />
+    <div className="relative">
+      <div 
+        ref={drag}
+        className={`cursor-grab ${isDragging ? 'opacity-50' : ''}`}
+      >
+        <div className="aspect-video bg-transparent rounded-md overflow-hidden mb-2 border border-gray-200">
+          <div className="w-full h-full flex items-center justify-center bg-white">
+            <img 
+              src={asset.src} 
+              alt={asset.name} 
+              className="max-w-full max-h-full object-contain p-1" 
+            />
+          </div>
         </div>
+        <p className="text-sm font-medium truncate">{asset.name}</p>
+        <p className="text-xs text-muted-foreground line-clamp-2">{asset.description}</p>
       </div>
-      <p className="text-sm font-medium truncate">{asset.name}</p>
-      <p className="text-xs text-muted-foreground line-clamp-2">{asset.description}</p>
+      
+      {asset.isCarpeting && (
+        <Button
+          variant="outline"
+          size="sm"
+          className="absolute top-2 right-2 bg-white/80 hover:bg-white"
+          onClick={() => createCarpet(asset)}
+        >
+          <FaThLarge className="w-3 h-3 mr-1" />
+          Carpet
+        </Button>
+      )}
     </div>
   );
 }
