@@ -55,10 +55,13 @@ const CanvasElementComponent = ({
   const [image] = useImage(element.src);
   
   // Update transformer on selection change
-  if (isSelected && trRef.current) {
-    trRef.current.nodes([shapeRef.current]);
-    trRef.current.getLayer().batchDraw();
-  }
+  useEffect(() => {
+    if (isSelected && trRef.current && shapeRef.current) {
+      // Attach transformer to selected element
+      trRef.current.nodes([shapeRef.current]);
+      trRef.current.getLayer().batchDraw();
+    }
+  }, [isSelected]);
   
   return (
     <>
@@ -71,8 +74,16 @@ const CanvasElementComponent = ({
         height={element.height}
         rotation={element.rotation}
         draggable
-        onClick={onSelect}
-        onTap={onSelect}
+        onClick={(e) => {
+          // Stop event propagation to prevent stage onClick from firing
+          e.cancelBubble = true;
+          onSelect();
+        }}
+        onTap={(e) => {
+          // Stop event propagation for touch events too
+          e.cancelBubble = true;
+          onSelect();
+        }}
         onDragEnd={(e) => {
           onChange({
             x: e.target.x(),
