@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { useLocation } from "wouter";
+import { useLocation, Link } from "wouter";
 import { useAuth } from "@/hooks/use-auth";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -16,6 +16,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { Alert, AlertTitle, AlertDescription } from "@/components/ui/alert";
 import {
   Form,
   FormControl,
@@ -47,6 +48,7 @@ export default function AuthPage() {
   const [activeTab, setActiveTab] = useState<"login" | "register">("login");
   const [location, navigate] = useLocation();
   const { user, loginMutation, registerMutation } = useAuth();
+  const [loginError, setLoginError] = useState<string | null>(null);
 
   // Redirect if already authenticated
   useEffect(() => {
@@ -75,7 +77,17 @@ export default function AuthPage() {
     },
   });
 
+  // Effect to handle login errors
+  useEffect(() => {
+    if (loginMutation.isError) {
+      setLoginError((loginMutation.error as Error).message);
+    } else {
+      setLoginError(null);
+    }
+  }, [loginMutation.isError, loginMutation.error]);
+
   const onLoginSubmit = (values: LoginFormValues) => {
+    setLoginError(null);
     loginMutation.mutate(values);
   };
 
@@ -117,6 +129,14 @@ export default function AuthPage() {
                   <CardDescription>Enter your credentials to access your account</CardDescription>
                 </CardHeader>
                 <CardContent>
+                  {loginError && (
+                    <Alert variant="destructive" className="mb-4">
+                      <AlertTitle>Login Failed</AlertTitle>
+                      <AlertDescription>
+                        {loginError}
+                      </AlertDescription>
+                    </Alert>
+                  )}
                   <Form {...loginForm}>
                     <form onSubmit={loginForm.handleSubmit(onLoginSubmit)} className="space-y-4">
                       <FormField
@@ -143,14 +163,13 @@ export default function AuthPage() {
                             </FormControl>
                             <FormMessage />
                             <div className="pt-1 text-right">
-                              <Link href="/forgot-password">
-                                <Button 
-                                  variant="link" 
-                                  className="p-0 h-auto text-sm" 
-                                >
-                                  Forgot password?
-                                </Button>
-                              </Link>
+                              <Button 
+                                variant="link" 
+                                className="p-0 h-auto text-sm"
+                                onClick={() => navigate("/forgot-password")}
+                              >
+                                Forgot password?
+                              </Button>
                             </div>
                           </FormItem>
                         )}
