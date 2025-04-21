@@ -190,44 +190,50 @@ export default function PropertyPanel() {
           </div>
         </div>
         
-        {/* Carpet feature for carpeting plants */}
-        {isCarpetingPlant && (
-          <div className="mt-4">
-            <h3 className="font-medium text-sm mb-2">Carpeting Options</h3>
-            <div className="space-y-2">
-              <Button
-                variant="default"
-                className="w-full flex items-center justify-center px-3 py-2 rounded text-sm"
-                onClick={() => asset && createCarpet(asset)}
-              >
-                <FaThLarge className="mr-1.5" /> Create Carpet Pattern
-              </Button>
-              {selectedElement.carpetGroupId && (
-                <Button
-                  variant="outline"
-                  className="w-full flex items-center justify-center px-3 py-2 rounded text-sm"
-                  onClick={() => selectAllOfType(selectedElement.name, selectedElement.carpetGroupId)}
-                >
-                  <FaObjectGroup className="mr-1.5" /> Select All in Carpet
-                </Button>
-              )}
-              <p className="text-xs text-muted-foreground mt-1">
-                Creates a grid of plants to form a carpet in your aquarium.
-              </p>
-            </div>
-          </div>
-        )}
-        
-        {/* Select All button for all elements (not just carpets) */}
+        {/* Plant options */}
         {selectedElement.type === 'plants' && (
           <div className="mt-4">
-            <Button
-              variant="outline"
-              className="w-full flex items-center justify-center px-3 py-2 rounded text-sm"
-              onClick={() => selectAllOfType(selectedElement.name)}
-            >
-              <FaObjectGroup className="mr-1.5" /> Select All of Same Type
-            </Button>
+            <h3 className="font-medium text-sm mb-2">
+              {isCarpetingPlant ? "Carpeting Options" : "Plant Options"}
+            </h3>
+            <div className="space-y-2">
+              {/* Create Carpet button only shows for carpeting plants */}
+              {isCarpetingPlant && (
+                <Button
+                  variant="default"
+                  className="w-full flex items-center justify-center px-3 py-2 rounded text-sm"
+                  onClick={() => asset && createCarpet(asset)}
+                >
+                  <FaThLarge className="mr-1.5" /> Create Carpet Pattern
+                </Button>
+              )}
+              
+              {/* One unified "Select All" button that's context-aware */}
+              <Button
+                variant="outline"
+                className="w-full flex items-center justify-center px-3 py-2 rounded text-sm"
+                onClick={() => {
+                  if (selectedElement.carpetGroupId) {
+                    // If this is part of a carpet, select all in that carpet
+                    selectAllOfType(selectedElement.name, selectedElement.carpetGroupId);
+                  } else {
+                    // Otherwise select all of this plant type
+                    selectAllOfType(selectedElement.name);
+                  }
+                }}
+              >
+                <FaObjectGroup className="mr-1.5" /> 
+                {selectedElement.carpetGroupId 
+                  ? "Select All in Carpet" 
+                  : "Select All of Same Type"}
+              </Button>
+              
+              {isCarpetingPlant && (
+                <p className="text-xs text-muted-foreground mt-1">
+                  Creates a grid of plants to form a carpet in your aquarium.
+                </p>
+              )}
+            </div>
           </div>
         )}
         

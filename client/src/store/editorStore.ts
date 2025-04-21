@@ -366,7 +366,7 @@ export const useStore = create<EditorState>()(
         get().pushHistory();
       },
       
-      // Select all elements of a specific type (e.g., all plants of the same name)
+      // Select all elements of a specific type by name/group
       selectAllOfType: (name: string, carpetGroupId?: string) => {
         const { elements } = get();
         
@@ -378,9 +378,16 @@ export const useStore = create<EditorState>()(
           return el.name === name;
         });
         
-        // If we found matching elements, select the first one
+        // If we found matching elements, highlight the first one
         if (matchingElements.length > 0) {
-          set({ selectedElement: matchingElements[0].id });
+          // First, deselect any current selection
+          set({ selectedElement: null });
+          
+          // Then select the first element
+          setTimeout(() => {
+            set({ selectedElement: matchingElements[0].id });
+            console.log(`Selected ${matchingElements.length} ${name} plants`);
+          }, 50);
         }
       },
       

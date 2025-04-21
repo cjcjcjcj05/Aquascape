@@ -145,21 +145,49 @@ export default function Canvas() {
     substrateSettings
   } = useStore();
   
-  // Handle keyboard events for delete and other operations
+  // Handle keyboard events for delete, arrow navigation, and other operations
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
+      // Delete selected element
       if ((e.key === 'Delete' || e.key === 'Backspace') && selectedElement) {
         removeElement(selectedElement);
         toast({
           title: "Element deleted",
           description: "The selected element has been removed"
         });
-      } else if (e.ctrlKey && e.key === 'z') {
-        // Undo operation
+      } 
+      // Undo operation
+      else if (e.ctrlKey && e.key === 'z') {
         if (canUndo) undo();
-      } else if (e.ctrlKey && e.key === 'y') {
-        // Redo operation
+      } 
+      // Redo operation
+      else if (e.ctrlKey && e.key === 'y') {
         if (canRedo) redo();
+      }
+      // Arrow keys to navigate between elements of the same type
+      else if ((e.key === 'ArrowRight' || e.key === 'ArrowLeft') && selectedElement) {
+        const currentElement = elements.find(el => el.id === selectedElement);
+        if (currentElement) {
+          // Get all elements of the same name
+          const sameTypeElements = elements.filter(el => el.name === currentElement.name);
+          
+          if (sameTypeElements.length > 1) {
+            // Find the current index
+            const currentIndex = sameTypeElements.findIndex(el => el.id === selectedElement);
+            let nextIndex;
+            
+            if (e.key === 'ArrowRight') {
+              // Move to next element (or wrap around to the first)
+              nextIndex = (currentIndex + 1) % sameTypeElements.length;
+            } else {
+              // Move to previous element (or wrap to the last)
+              nextIndex = (currentIndex - 1 + sameTypeElements.length) % sameTypeElements.length;
+            }
+            
+            // Select the next/previous element
+            setSelectedElement(sameTypeElements[nextIndex].id);
+          }
+        }
       }
     };
     
@@ -167,7 +195,7 @@ export default function Canvas() {
     return () => {
       window.removeEventListener('keydown', handleKeyDown);
     };
-  }, [selectedElement, removeElement, toast, undo, redo, canUndo, canRedo]);
+  }, [selectedElement, elements, removeElement, toast, undo, redo, canUndo, canRedo, setSelectedElement]);
   
   // Calculate stage dimensions based on tank dimensions and a scale factor
   const scaleFactor = 10; // 1cm = 10px
