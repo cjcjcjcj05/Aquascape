@@ -142,6 +142,18 @@ export default function AuthPage() {
                               <Input type="password" placeholder="••••••" {...field} />
                             </FormControl>
                             <FormMessage />
+                            <div className="pt-1 text-right">
+                              <Button 
+                                variant="link" 
+                                className="p-0 h-auto text-sm" 
+                                onClick={(e) => {
+                                  e.preventDefault();
+                                  window.location.href = "/forgot-password";
+                                }}
+                              >
+                                Forgot password?
+                              </Button>
+                            </div>
                           </FormItem>
                         )}
                       />
