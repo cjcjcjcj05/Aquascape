@@ -95,10 +95,10 @@ const plants: Asset[] = [
     category: "plants",
     type: "midground",
     name: "Hygrophila Pinnatifida",
-    description: "Unique fern-like aquatic plant with reddish-brown textured leaves that add visual interest to any aquascape.",
-    src: "/assets/plants/java_moss.png",
-    defaultWidth: 100,
-    defaultHeight: 120
+    description: "Unique fern-like aquatic plant with detailed green leaves on reddish stems that add texture and visual interest.",
+    src: "/assets/plants/hygrophila_pinnatifida.png",
+    defaultWidth: 110,
+    defaultHeight: 140
   },
   {
     id: "plant-eleocharis-mini",
