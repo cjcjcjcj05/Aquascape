@@ -16,34 +16,88 @@ function SubstrateLibrary() {
     setSubstrateVariant 
   } = useStore();
   
+  const [searchTerm, setSearchTerm] = useState("");
+  const [selectedSubstrateType, setSelectedSubstrateType] = useState<string>("all");
+  
+  // Get all substrate type names for filter buttons
+  const substrateTypeNames = ["all", ...substrateTypes.map(type => type.id)];
+  
+  // Filter substrate types and variants based on search and selected type
+  const filteredSubstrateItems = substrateTypes
+    .filter(type => selectedSubstrateType === "all" || type.id === selectedSubstrateType)
+    .flatMap(type => 
+      type.variants
+        .filter(variant => 
+          variant.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+          type.name.toLowerCase().includes(searchTerm.toLowerCase())
+        )
+        .map(variant => ({ typeId: type.id, variant }))
+    );
+  
   return (
-    <div className="h-full overflow-y-auto overflow-x-hidden p-4" 
-         style={{ 
-           overflowY: 'auto', 
-           height: '100%', 
-           maxHeight: '60vh',
-           border: '1px solid #eaeaea',
-           borderRadius: '4px'
-         }}>
-      <div className="mb-4">
-        <p className="text-xs text-muted-foreground mb-4">
-          Click on a substrate option to apply it to your aquarium.
-        </p>
+    <div className="h-full flex flex-col">
+      <div className="p-4 pb-2">
+        <div className="mb-3">
+          <div className="relative">
+            <Input
+              type="text"
+              placeholder="Search substrate..."
+              className="w-full pl-9 pr-3 py-2 bg-gray-50 border border-gray-200 rounded-md text-sm"
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+            />
+            <FaSearch className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" />
+          </div>
+        </div>
+        
+        <div className="mb-4">
+          <h3 className="font-medium text-sm mb-2">Substrate Types</h3>
+          <div className="flex flex-wrap gap-2">
+            {substrateTypeNames.map(type => (
+              <Button
+                key={type}
+                variant={selectedSubstrateType === type ? "default" : "outline"}
+                size="sm"
+                className={`px-3 py-1 rounded-full text-xs font-medium ${
+                  selectedSubstrateType === type ? 'bg-primary text-primary-foreground' : ''
+                }`}
+                onClick={() => setSelectedSubstrateType(type)}
+              >
+                {type === "all" ? "All" : type.charAt(0).toUpperCase() + type.slice(1)}
+              </Button>
+            ))}
+          </div>
+        </div>
+      </div>
+      
+      <div 
+        style={{ 
+          overflowY: 'auto', 
+          maxHeight: '60vh',
+          border: '1px solid #eaeaea',
+          borderRadius: '4px',
+          padding: '1rem',
+          margin: '0 1rem 1rem'
+        }}
+      >
+        <div className="mb-3">
+          <p className="text-xs text-muted-foreground">
+            Click on a substrate option to apply it to your aquarium.
+          </p>
+        </div>
         
         <div className="grid grid-cols-2 gap-3">
-          {substrateTypes.flatMap(type => 
-            type.variants.map(variant => (
-              <SubstrateVariantItem
-                key={variant.id}
-                typeId={type.id}
-                variant={variant}
-                isSelected={
-                  substrateSettings.typeId === type.id &&
-                  substrateSettings.variantId === variant.id
-                }
-              />
-            ))
-          )}
+          {filteredSubstrateItems.map(({ typeId, variant }) => (
+            <SubstrateVariantItem
+              key={variant.id}
+              typeId={typeId}
+              variant={variant}
+              isSelected={
+                substrateSettings.typeId === typeId &&
+                substrateSettings.variantId === variant.id
+              }
+            />
+          ))}
         </div>
       </div>
     </div>
