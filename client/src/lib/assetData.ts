@@ -91,6 +91,16 @@ const hardscape: Asset[] = [
 // Plants
 const plants: Asset[] = [
   {
+    id: "plant-hygrophila-pinnatifida",
+    category: "plants",
+    type: "midground",
+    name: "Hygrophila Pinnatifida",
+    description: "Unique fern-like aquatic plant with reddish-brown textured leaves that add visual interest to any aquascape.",
+    src: "/assets/plants/java_moss.png",
+    defaultWidth: 100,
+    defaultHeight: 120
+  },
+  {
     id: "plant-eleocharis-mini",
     category: "plants",
     type: "foreground",
