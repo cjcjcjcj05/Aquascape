@@ -1,9 +1,17 @@
 import type { Express, Request, Response, NextFunction } from "express";
 import { createServer, type Server } from "http";
 import { storage } from "./storage";
-import { insertDesignSchema, updateDesignSchema } from "@shared/schema";
-import { setupAuth } from "./auth";
+import { 
+  insertDesignSchema, updateDesignSchema,
+  updateProfileSchema, forgotPasswordSchema, resetPasswordSchema
+} from "@shared/schema";
+import { setupAuth, hashPassword } from "./auth";
 import { z } from "zod";
+import { 
+  initializeEmailService, 
+  sendPasswordResetEmail, 
+  sendVerificationEmail
+} from "./emailService";
 
 // Middleware to check if user is authenticated
 const isAuthenticated = (req: Request, res: Response, next: NextFunction) => {
@@ -14,6 +22,9 @@ const isAuthenticated = (req: Request, res: Response, next: NextFunction) => {
 };
 
 export async function registerRoutes(app: Express): Promise<Server> {
+  // Initialize email service
+  await initializeEmailService();
+  
   // Set up authentication
   setupAuth(app);
 
@@ -101,6 +112,180 @@ export async function registerRoutes(app: Express): Promise<Server> {
       res.status(204).send();
     } catch (error) {
       res.status(500).json({ message: 'Failed to delete design' });
+    }
+  });
+
+  // User Profile API
+  app.get('/api/profile', isAuthenticated, async (req: Request, res: Response) => {
+    try {
+      const userId = req.user?.id;
+      if (!userId) {
+        return res.status(401).json({ message: 'Not authenticated' });
+      }
+      
+      let profile = await storage.getUserProfile(userId);
+      
+      // If profile doesn't exist, create a new one
+      if (!profile) {
+        profile = await storage.createUserProfile({
+          userId,
+          displayName: req.user?.username || '',
+        });
+      }
+      
+      res.json(profile);
+    } catch (error) {
+      res.status(500).json({ message: 'Failed to fetch profile' });
+    }
+  });
+
+  app.put('/api/profile', isAuthenticated, async (req: Request, res: Response) => {
+    try {
+      const userId = req.user?.id;
+      if (!userId) {
+        return res.status(401).json({ message: 'Not authenticated' });
+      }
+      
+      const validationResult = updateProfileSchema.safeParse(req.body);
+      if (!validationResult.success) {
+        return res.status(400).json({ 
+          message: 'Invalid profile data', 
+          errors: validationResult.error.errors 
+        });
+      }
+      
+      let profile = await storage.getUserProfile(userId);
+      
+      if (!profile) {
+        // Create a new profile if it doesn't exist
+        profile = await storage.createUserProfile({
+          userId,
+          ...validationResult.data,
+        });
+      } else {
+        // Update the existing profile
+        profile = await storage.updateUserProfile(userId, validationResult.data);
+      }
+      
+      res.json(profile);
+    } catch (error) {
+      res.status(500).json({ message: 'Failed to update profile' });
+    }
+  });
+
+  // Password Reset API
+  app.post('/api/forgot-password', async (req: Request, res: Response) => {
+    try {
+      const validationResult = forgotPasswordSchema.safeParse(req.body);
+      if (!validationResult.success) {
+        return res.status(400).json({ 
+          message: 'Invalid data', 
+          errors: validationResult.error.errors 
+        });
+      }
+      
+      const { email } = validationResult.data;
+      const token = await storage.createResetToken(email);
+      
+      if (!token) {
+        // Don't reveal if email exists or not for security
+        return res.json({ message: 'If a user with that email exists, a password reset link has been sent.' });
+      }
+      
+      // Get the user to pass their username to the email template
+      const user = await storage.getUserByEmail(email);
+      if (!user) {
+        return res.json({ message: 'If a user with that email exists, a password reset link has been sent.' });
+      }
+      
+      // Send password reset email
+      const emailPreviewUrl = await sendPasswordResetEmail(email, token, user.username);
+      
+      res.json({ 
+        message: 'A password reset link has been sent to your email.',
+        // For development only - in production we wouldn't return this
+        emailPreviewUrl
+      });
+    } catch (error) {
+      console.error('Password reset error:', error);
+      res.status(500).json({ message: 'Failed to process password reset request' });
+    }
+  });
+
+  app.post('/api/reset-password', async (req: Request, res: Response) => {
+    try {
+      const validationResult = resetPasswordSchema.safeParse(req.body);
+      if (!validationResult.success) {
+        return res.status(400).json({ 
+          message: 'Invalid data', 
+          errors: validationResult.error.errors 
+        });
+      }
+      
+      const { token, password } = validationResult.data;
+      const hashedPassword = await hashPassword(password);
+      const success = await storage.resetPassword(token, hashedPassword);
+      
+      if (!success) {
+        return res.status(400).json({ message: 'Invalid or expired reset token' });
+      }
+      
+      res.json({ message: 'Password has been reset successfully' });
+    } catch (error) {
+      res.status(500).json({ message: 'Failed to reset password' });
+    }
+  });
+
+  // Email verification API
+  app.post('/api/verify-email', isAuthenticated, async (req: Request, res: Response) => {
+    try {
+      const userId = req.user?.id;
+      if (!userId) {
+        return res.status(401).json({ message: 'Not authenticated' });
+      }
+      
+      // Create verification token
+      const token = await storage.createVerificationToken(userId);
+      
+      // Send verification email if user has an email
+      if (req.user?.email) {
+        const emailPreviewUrl = await sendVerificationEmail(
+          req.user.email, 
+          token, 
+          req.user.username
+        );
+        
+        return res.json({ 
+          message: 'A verification email has been sent to your address. Please check your inbox.',
+          // For development only
+          emailPreviewUrl
+        });
+      }
+      
+      // If user doesn't have an email, return the token directly
+      res.json({ 
+        message: 'Verification token created',
+        // For development/testing only
+        token
+      });
+    } catch (error) {
+      console.error('Email verification error:', error);
+      res.status(500).json({ message: 'Failed to create verification token' });
+    }
+  });
+
+  app.get('/api/verify-email/:token', async (req: Request, res: Response) => {
+    try {
+      const { token } = req.params;
+      const success = await storage.verifyEmail(token);
+      
+      if (!success) {
+        return res.status(400).json({ message: 'Invalid verification token' });
+      }
+      
+      res.json({ message: 'Email verified successfully' });
+    } catch (error) {
+      res.status(500).json({ message: 'Failed to verify email' });
     }
   });
 
