@@ -32,8 +32,8 @@ AquaDesign is an advanced aquascaping design platform that enables users to crea
 
 1. Clone the repository
    ```bash
-   git clone https://github.com/yourusername/aquadesign.git
-   cd aquadesign
+   git clone https://github.com/cjcjcjcj05/Aquascape.git
+   cd Aquascape
    ```
 
 2. Install dependencies
