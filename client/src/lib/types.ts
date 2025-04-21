@@ -10,6 +10,7 @@ export interface Asset {
   defaultWidth?: number;
   defaultHeight?: number;
   color?: string; // For substrate colors
+  isCarpeting?: boolean;  // New property to identify carpeting plants
 }
 
 export interface TankDimensions {

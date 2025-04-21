@@ -5,7 +5,8 @@ import {
   HistoryState, 
   TankDimensions, 
   SubstrateSettings, 
-  ElevationPoint
+  ElevationPoint,
+  Asset
 } from '@/lib/types';
 import { getSubstrateVariant } from '@/lib/substrateData';
 import { persist, createJSONStorage } from 'zustand/middleware';
@@ -38,6 +39,7 @@ interface EditorState {
   updateElement: (id: string, props: Partial<CanvasElement>) => void;
   removeElement: (id: string) => void;
   duplicateElement: (id: string) => void;
+  createCarpet: (asset: Asset) => void;
   saveProject: () => void;
   
   // History actions
@@ -249,6 +251,41 @@ export const useStore = create<EditorState>()(
             selectedElement: newElement.id
           });
         }
+      },
+      
+      createCarpet: (asset: Asset) => {
+        const { tankDimensions } = get();
+        const gridSize = 4; // 4x4 grid
+        const spacing = 10; // Space between plants
+        
+        // Calculate plant size with spacing
+        const plantWidth = asset.defaultWidth + spacing;
+        const plantHeight = asset.defaultHeight + spacing;
+        
+        // Calculate grid dimensions based on tank size
+        const gridWidth = tankDimensions.width / gridSize;
+        const gridHeight = tankDimensions.depth / gridSize;
+        
+        // Create plants in a grid pattern
+        for (let row = 0; row < gridSize; row++) {
+          for (let col = 0; col < gridSize; col++) {
+            const newElement: CanvasElement = {
+              id: `element-${Date.now()}-${row}-${col}`,
+              type: asset.category,
+              name: asset.name,
+              src: asset.src,
+              x: col * gridWidth + (gridWidth - plantWidth) / 2,
+              y: row * gridHeight + (gridHeight - plantHeight) / 2,
+              width: asset.defaultWidth,
+              height: asset.defaultHeight,
+              rotation: Math.random() * 30 - 15, // Random rotation between -15 and 15 degrees
+              depth: 'foreground',
+            };
+            get().addElement(newElement);
+          }
+        }
+        
+        get().pushHistory();
       },
       
       saveProject: () => {
