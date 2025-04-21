@@ -15,9 +15,9 @@ export default function Sidebar() {
   const elements = useStore(state => state.elements);
   
   return (
-    <aside className="w-72 bg-white border-r border-gray-200 flex flex-col overflow-hidden">
-      {/* Project Info */}
-      <div className="p-4 border-b border-gray-200">
+    <aside className="w-72 bg-white border-r border-gray-200 flex flex-col h-full">
+      {/* Project Info - Fixed Height Header */}
+      <div className="shrink-0 p-4 border-b border-gray-200">
         <div className="flex items-center justify-between mb-3">
           {isEditingName ? (
             <input
@@ -52,32 +52,35 @@ export default function Sidebar() {
         />
       </div>
       
-      {/* Assets Library / Layers */}
-      <div className="flex-1 overflow-hidden flex flex-col">
-        <div className="border-b border-gray-200">
-          <div className="flex">
-            <button 
-              className={`flex-1 px-4 py-3 text-left font-medium ${activeTab === 'library' ? 'text-primary border-b-2 border-primary' : 'text-ui-light'} hover:bg-gray-50 transition focus:outline-none`}
-              onClick={() => setActiveTab('library')}
-            >
-              Library
-            </button>
-            <button 
-              className={`flex-1 px-4 py-3 text-left font-medium ${activeTab === 'layers' ? 'text-primary border-b-2 border-primary' : 'text-ui-light'} hover:bg-gray-50 transition focus:outline-none`}
-              onClick={() => setActiveTab('layers')}
-            >
-              Layers
-            </button>
-          </div>
+      {/* Tabs Navigation - Fixed Height */}
+      <div className="shrink-0 border-b border-gray-200">
+        <div className="flex">
+          <button 
+            className={`flex-1 px-4 py-3 text-left font-medium ${activeTab === 'library' ? 'text-primary border-b-2 border-primary' : 'text-ui-light'} hover:bg-gray-50 transition focus:outline-none`}
+            onClick={() => setActiveTab('library')}
+          >
+            Library
+          </button>
+          <button 
+            className={`flex-1 px-4 py-3 text-left font-medium ${activeTab === 'layers' ? 'text-primary border-b-2 border-primary' : 'text-ui-light'} hover:bg-gray-50 transition focus:outline-none`}
+            onClick={() => setActiveTab('layers')}
+          >
+            Layers
+          </button>
         </div>
-        
+      </div>
+      
+      {/* Category Navigation - Fixed Height */}
+      {activeTab === 'library' && (
+        <div className="shrink-0">
+          <CategoryNav />
+        </div>
+      )}
+      
+      {/* Content Area - Flexible Height with Scrolling */}
+      <div className="grow overflow-auto">
         {activeTab === 'library' ? (
-          <div className="flex flex-col h-full overflow-hidden">
-            <CategoryNav />
-            <div className="flex-1 overflow-auto">
-              <AssetLibrary />
-            </div>
-          </div>
+          <AssetLibrary />
         ) : (
           <div className="flex-1 overflow-y-auto p-4">
             <h3 className="font-medium text-sm mb-3">Elements</h3>
