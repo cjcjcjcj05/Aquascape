@@ -4,7 +4,7 @@ import { useToast } from "@/hooks/use-toast";
 import { useAuth } from "@/hooks/use-auth";
 import { useStore } from "@/store/editorStore";
 import { useState } from "react";
-import { FaMoon, FaSun, FaSave, FaUser, FaSignOutAlt } from "react-icons/fa";
+import { FaMoon, FaSun, FaSave, FaUser, FaSignOutAlt, FaCog } from "react-icons/fa";
 
 export default function Header() {
   const [location, navigate] = useLocation();
@@ -87,6 +87,15 @@ export default function Header() {
             <div className="text-sm font-medium hidden md:block">
               Hi, {user.username}
             </div>
+            <Link href="/profile">
+              <Button 
+                variant="ghost"
+                className="flex items-center"
+                size="sm"
+              >
+                <FaCog className="mr-2" /> Profile
+              </Button>
+            </Link>
             <Button 
               variant="outline"
               className="flex items-center"
