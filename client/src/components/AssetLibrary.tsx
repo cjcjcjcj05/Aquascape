@@ -35,8 +35,15 @@ function SubstrateLibrary() {
     );
   
   return (
-    <div className="h-full flex flex-col">
-      <div className="p-4 pb-2">
+    <div 
+      className="h-full flex flex-col overflow-y-auto overflow-x-hidden scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-gray-100"
+      style={{
+        overflowY: 'scroll',
+        height: 'calc(100vh - 250px)',
+        maxHeight: '100%'
+      }}
+    >
+      <div className="p-4 pb-2 sticky top-0 bg-white z-10">
         <div className="mb-3">
           <div className="relative">
             <Input
@@ -70,19 +77,7 @@ function SubstrateLibrary() {
         </div>
       </div>
       
-      <div 
-        className="px-4 pb-4 flex-1 overflow-y-auto overflow-x-hidden scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-gray-100" 
-        style={{
-          maxHeight: '60vh',
-          overflowY: 'scroll',
-          height: '500px',
-          border: '1px solid #eaeaea',
-          borderRadius: '4px',
-          marginLeft: '1rem',
-          marginRight: '1rem',
-          marginBottom: '1rem'
-        }}
-      >
+      <div className="px-4 pb-4 flex-1">
         <div className="mb-3">
           <p className="text-xs text-muted-foreground">
             Click on a substrate option to apply it to your aquarium.
@@ -203,8 +198,15 @@ export default function AssetLibrary() {
   });
   
   return (
-    <div className="h-full flex flex-col">
-      <div className="p-4 pb-2">
+    <div 
+      className="h-full flex flex-col overflow-y-auto overflow-x-hidden scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-gray-100"
+      style={{
+        overflowY: 'scroll',
+        height: 'calc(100vh - 250px)',
+        maxHeight: '100%'
+      }}
+    >
+      <div className="p-4 pb-2 sticky top-0 bg-white z-10">
         <div className="mb-3">
           <div className="relative">
             <Input
@@ -238,19 +240,7 @@ export default function AssetLibrary() {
         </div>
       </div>
       
-      <div 
-        className="px-4 pb-4 flex-1 overflow-y-auto overflow-x-hidden scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-gray-100" 
-        style={{
-          maxHeight: '60vh',
-          overflowY: 'scroll',
-          height: '500px',
-          border: '1px solid #eaeaea',
-          borderRadius: '4px',
-          marginLeft: '1rem',
-          marginRight: '1rem',
-          marginBottom: '1rem'
-        }}
-      >
+      <div className="px-4 pb-4 flex-1">
         <div className="grid grid-cols-2 gap-4">
           {filteredAssets.map((asset) => (
             <AssetItem key={asset.id} asset={asset} />

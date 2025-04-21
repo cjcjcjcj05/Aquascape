@@ -27,31 +27,21 @@ const assetData: Asset[] = [
   {
     id: "3",
     category: "hardscape",
-    type: "wood",
-    name: "Driftwood",
-    description: "Natural driftwood piece with interesting shape, perfect for aquascaping focal points.",
-    src: "/assets/hardscape/driftwood.png",
-    defaultWidth: 200,
-    defaultHeight: 150
+    type: "rock",
+    name: "Dragonstone 1",
+    description: "Tall textured porous stone with unique honeycomb patterns, perfect for creating dramatic landscapes.",
+    src: "/assets/hardscape/dragonstone-1.png",
+    defaultWidth: 180,
+    defaultHeight: 220
   },
   {
     id: "4",
     category: "hardscape",
     type: "rock",
-    name: "Rock Formation",
-    description: "Dramatic rock arrangement for creating height and structure in aquascapes.",
-    src: "/assets/hardscape/rock_formation.png",
-    defaultWidth: 250,
-    defaultHeight: 200
-  },
-  {
-    id: "5",
-    category: "hardscape",
-    type: "rock",
-    name: "Dragon Stone",
-    description: "Textured porous stone with unique honeycomb patterns, perfect for creating dramatic landscapes.",
-    src: "/assets/hardscape/dragon_stone.png",
-    defaultWidth: 180,
+    name: "Dragonstone 2",
+    description: "Wide textured porous stone with unique honeycomb patterns, ideal for creating aquascape focal points.",
+    src: "/assets/hardscape/dragonstone-2.png",
+    defaultWidth: 220,
     defaultHeight: 140
   },
   
