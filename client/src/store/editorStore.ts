@@ -41,6 +41,7 @@ interface EditorState {
   duplicateElement: (id: string) => void;
   createCarpet: (asset: Asset) => void;
   clearAllElements: () => void;
+  clearHistory: () => void;
   saveProject: () => void;
   selectAllOfType: (name: string, carpetGroupId?: string) => void;
   
@@ -93,10 +94,22 @@ export const useStore = create<EditorState>()(
         // Remove future history if we're not at the end
         const newHistory = history.slice(0, historyIndex + 1);
         
+        // Limit history size to prevent localStorage quota issues
+        // Keep only the 20 most recent states if we exceed that amount
+        const MAX_HISTORY_SIZE = 20;
+        const trimmedHistory = newHistory.length >= MAX_HISTORY_SIZE 
+          ? newHistory.slice(-MAX_HISTORY_SIZE + 1) // Make room for new state
+          : newHistory;
+        
+        // Adjust history index if we trimmed old states
+        const adjustedIndex = newHistory.length >= MAX_HISTORY_SIZE
+          ? MAX_HISTORY_SIZE - 1
+          : historyIndex + 1;
+        
         // Add new state to history
         set({
-          history: [...newHistory, newState],
-          historyIndex: historyIndex + 1,
+          history: [...trimmedHistory, newState],
+          historyIndex: adjustedIndex,
           canUndo: true,
           canRedo: false
         });
@@ -397,6 +410,26 @@ export const useStore = create<EditorState>()(
         get().pushHistory();
       },
       
+      // Clear history to fix localStorage quota issues
+      clearHistory: () => {
+        const state = get();
+        // Save current state as the only history state
+        const currentState: HistoryState = {
+          tankDimensions: { ...state.tankDimensions },
+          elements: JSON.parse(JSON.stringify(state.elements)),
+          selectedElement: state.selectedElement,
+          currentCategory: state.currentCategory,
+          substrateSettings: JSON.parse(JSON.stringify(state.substrateSettings))
+        };
+        
+        set({
+          history: [currentState],
+          historyIndex: 0,
+          canUndo: false,
+          canRedo: false
+        });
+      },
+      
       saveProject: () => {
         // This would typically save to the backend
         // For now, we're using localStorage via the persist middleware
@@ -446,7 +479,41 @@ export const useStore = create<EditorState>()(
     }),
     {
       name: 'aquadesign-storage',
-      storage: createJSONStorage(() => localStorage)
+      storage: createJSONStorage(() => ({
+        getItem: (name) => {
+          try {
+            return localStorage.getItem(name);
+          } catch (error) {
+            console.warn('Error accessing localStorage:', error);
+            return null;
+          }
+        },
+        setItem: (name, value) => {
+          try {
+            // Trim history to a reasonable size to avoid quota issues
+            if (name === 'aquadesign-storage') {
+              const data = JSON.parse(value);
+              if (data && data.state && data.state.history && data.state.history.length > 10) {
+                // Only keep the 10 most recent history states
+                data.state.history = data.state.history.slice(-10);
+                data.state.historyIndex = Math.min(data.state.historyIndex, 9);
+                localStorage.setItem(name, JSON.stringify(data));
+                return;
+              }
+            }
+            localStorage.setItem(name, value);
+          } catch (error) {
+            console.warn('Error writing to localStorage:', error);
+          }
+        },
+        removeItem: (name) => {
+          try {
+            localStorage.removeItem(name);
+          } catch (error) {
+            console.warn('Error removing from localStorage:', error);
+          }
+        }
+      }))
     }
   )
 );

@@ -4,7 +4,24 @@ import { useToast } from "@/hooks/use-toast";
 import { useAuth } from "@/hooks/use-auth";
 import { useStore } from "@/store/editorStore";
 import { useState } from "react";
-import { FaMoon, FaSun, FaSave, FaUser, FaSignOutAlt, FaCog } from "react-icons/fa";
+import { 
+  FaMoon, 
+  FaSun, 
+  FaSave, 
+  FaUser, 
+  FaSignOutAlt, 
+  FaCog, 
+  FaTrash, 
+  FaExclamationTriangle,
+  FaEllipsisV 
+} from "react-icons/fa";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 
 export default function Header() {
   const [location, navigate] = useLocation();
@@ -12,6 +29,7 @@ export default function Header() {
   const { toast } = useToast();
   const { user, logoutMutation } = useAuth();
   const saveProject = useStore(state => state.saveProject);
+  const clearHistory = useStore(state => state.clearHistory);
   
   const handleSaveProject = () => {
     saveProject();
@@ -74,12 +92,59 @@ export default function Header() {
         </button>
         
         {location === '/editor' && (
-          <Button 
-            className="bg-primary hover:bg-primary/90 text-white px-4 py-2 rounded-md font-medium transition flex items-center"
-            onClick={handleSaveProject}
-          >
-            <FaSave className="mr-2" /> Save Project
-          </Button>
+          <>
+            <Button 
+              className="bg-primary hover:bg-primary/90 text-white px-4 py-2 rounded-md font-medium transition flex items-center"
+              onClick={handleSaveProject}
+            >
+              <FaSave className="mr-2" /> Save Project
+            </Button>
+            
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button variant="ghost" size="icon">
+                  <FaEllipsisV className="h-4 w-4" />
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end">
+                <DropdownMenuItem
+                  onClick={() => {
+                    clearHistory();
+                    toast({
+                      title: "History Cleared",
+                      description: "The undo/redo history has been reset to save storage space.",
+                    });
+                  }}
+                >
+                  <FaTrash className="mr-2 h-4 w-4" />
+                  <span>Reset History</span>
+                </DropdownMenuItem>
+                <DropdownMenuSeparator />
+                <DropdownMenuItem
+                  onClick={() => {
+                    try {
+                      localStorage.clear();
+                      toast({
+                        title: "Storage Cleared",
+                        description: "Application data has been reset. Refreshing the page...",
+                      });
+                      setTimeout(() => window.location.reload(), 1500);
+                    } catch (error) {
+                      console.error("Error clearing localStorage:", error);
+                      toast({
+                        title: "Error",
+                        description: "Failed to clear storage.",
+                        variant: "destructive"
+                      });
+                    }
+                  }}
+                >
+                  <FaExclamationTriangle className="mr-2 h-4 w-4 text-red-500" />
+                  <span className="text-red-500">Reset Application</span>
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
+          </>
         )}
         
         {user ? (
