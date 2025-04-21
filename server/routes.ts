@@ -290,9 +290,18 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  // Asset generation API
+  // Asset generation API (admin/developer only)
   app.post('/api/generate-asset', isAuthenticated, async (req: Request, res: Response) => {
     try {
+      // Check if user is authorized to access this feature (admin check)
+      // For now, we'll restrict to specific user IDs as we don't have admin roles yet
+      const authorizedUserIds = [1]; // Add additional admin user IDs here
+      if (!authorizedUserIds.includes(req.user?.id)) {
+        return res.status(403).json({ 
+          message: 'You are not authorized to access this feature. The Asset Generator is only available to admin users.'
+        });
+      }
+      
       // Define validation schema for asset generation
       const generateAssetSchema = z.object({
         name: z.string().min(2).max(50),

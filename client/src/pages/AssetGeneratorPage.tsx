@@ -150,6 +150,10 @@ export default function AssetGeneratorPage() {
       <div className="flex flex-col space-y-4">
         <h1 className="text-3xl font-bold">AI Asset Generator</h1>
         <p className="text-muted-foreground">Create custom assets for your aquascape designs using AI</p>
+        <div className="bg-amber-50 border border-amber-200 p-4 rounded-md text-amber-800">
+          <p className="font-medium">Developer Feature</p>
+          <p className="text-sm mt-1">This tool is for development purposes only and is not part of the main application features.</p>
+        </div>
       </div>
 
       <Tabs value={activeTab} onValueChange={(value) => setActiveTab(value as "form" | "preview")}>
