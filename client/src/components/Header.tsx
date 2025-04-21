@@ -75,6 +75,11 @@ export default function Header() {
             Editor
           </span>
         </Link>
+        <Link href="/designs">
+          <span className={`font-medium cursor-pointer ${location === '/designs' ? 'text-primary border-b-2 border-primary pb-1' : 'text-ui-dark hover:text-primary'} transition`}>
+            My Designs
+          </span>
+        </Link>
         <Link href="/about">
           <span className={`font-medium cursor-pointer ${location === '/about' ? 'text-primary border-b-2 border-primary pb-1' : 'text-ui-dark hover:text-primary'} transition`}>
             About
