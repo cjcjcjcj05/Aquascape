@@ -430,10 +430,44 @@ export const useStore = create<EditorState>()(
         });
       },
       
-      saveProject: () => {
-        // This would typically save to the backend
-        // For now, we're using localStorage via the persist middleware
-        console.log('Project saved to localStorage');
+      saveProject: async () => {
+        try {
+          const state = get();
+          const { tankDimensions, elements } = state;
+          
+          // Format data for API
+          const designData = {
+            name: `Aquascape Design ${new Date().toLocaleDateString()}`,
+            width: tankDimensions.width,
+            height: tankDimensions.height,
+            depth: tankDimensions.depth,
+            elements: elements,
+            createdAt: new Date().toISOString(),
+            updatedAt: new Date().toISOString()
+          };
+          
+          // Make API request to save design
+          const response = await fetch('/api/designs', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(designData),
+            credentials: 'include'
+          });
+          
+          if (!response.ok) {
+            throw new Error('Failed to save design to server');
+          }
+          
+          console.log('Project saved to database');
+          return await response.json();
+        } catch (error) {
+          console.error('Error saving project:', error);
+          // Fall back to localStorage if saving to server fails
+          console.log('Project saved to localStorage only');
+          return null;
+        }
       },
       
       // History navigation

@@ -15,6 +15,7 @@ import AuthPage from "./pages/auth-page";
 import NotFound from "./pages/not-found";
 import ProfilePage from "./pages/ProfilePage";
 import DesignsPage from "./pages/DesignsPage";
+import AssetGeneratorPage from "./pages/AssetGeneratorPage";
 import ForgotPasswordPage from "./pages/ForgotPasswordPage";
 import ResetPasswordPage from "./pages/ResetPasswordPage";
 import VerifyEmailPage from "./pages/VerifyEmailPage";
@@ -36,6 +37,7 @@ export default function App() {
                   <ProtectedRoute path="/editor" component={Editor} />
                   <ProtectedRoute path="/profile" component={ProfilePage} />
                   <ProtectedRoute path="/designs" component={DesignsPage} />
+                  <ProtectedRoute path="/asset-generator" component={AssetGeneratorPage} />
                   <Route path="/about" component={About} />
                   <Route path="/auth" component={AuthPage} />
                   <Route path="/forgot-password" component={ForgotPasswordPage} />

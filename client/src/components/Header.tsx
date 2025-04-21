@@ -16,6 +16,17 @@ import {
   FaEllipsisV 
 } from "react-icons/fa";
 import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Loader2 } from "lucide-react";
+import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
@@ -26,17 +37,76 @@ import {
 export default function Header() {
   const [location, navigate] = useLocation();
   const [isDarkMode, setIsDarkMode] = useState(false);
+  const [saveDialogOpen, setSaveDialogOpen] = useState(false);
+  const [designName, setDesignName] = useState("");
+  const [isSaving, setIsSaving] = useState(false);
   const { toast } = useToast();
   const { user, logoutMutation } = useAuth();
   const saveProject = useStore(state => state.saveProject);
   const clearHistory = useStore(state => state.clearHistory);
+  const tankDimensions = useStore(state => state.tankDimensions);
   
-  const handleSaveProject = () => {
-    saveProject();
-    toast({
-      title: "Project Saved",
-      description: "Your aquascape design has been saved.",
-    });
+  const openSaveDialog = () => {
+    setDesignName(`Aquascape ${tankDimensions.width}×${tankDimensions.height}cm (${new Date().toLocaleDateString()})`);
+    setSaveDialogOpen(true);
+  };
+  
+  const handleSaveProject = async () => {
+    if (!designName.trim()) {
+      toast({
+        title: "Design Name Required",
+        description: "Please provide a name for your design.",
+        variant: "destructive"
+      });
+      return;
+    }
+    
+    setIsSaving(true);
+    try {
+      // Override the store's saveProject to include the custom name
+      const state = useStore.getState();
+      const { tankDimensions, elements } = state;
+      
+      // Format data for API
+      const designData = {
+        name: designName.trim(),
+        width: tankDimensions.width,
+        height: tankDimensions.height,
+        depth: tankDimensions.depth,
+        elements: elements,
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString()
+      };
+      
+      // Make API request to save design
+      const response = await fetch('/api/designs', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(designData),
+        credentials: 'include'
+      });
+      
+      if (!response.ok) {
+        throw new Error('Failed to save design to server');
+      }
+      
+      setSaveDialogOpen(false);
+      toast({
+        title: "Design Saved",
+        description: "Your aquascape design has been saved to your account.",
+      });
+    } catch (error) {
+      console.error('Error saving design:', error);
+      toast({
+        title: "Save Failed",
+        description: "There was an error saving your design. Your work is still saved locally.",
+        variant: "destructive"
+      });
+    } finally {
+      setIsSaving(false);
+    }
   };
   
   const handleLogout = () => {
@@ -100,7 +170,7 @@ export default function Header() {
           <>
             <Button 
               className="bg-primary hover:bg-primary/90 text-white px-4 py-2 rounded-md font-medium transition flex items-center"
-              onClick={handleSaveProject}
+              onClick={openSaveDialog}
             >
               <FaSave className="mr-2" /> Save Project
             </Button>
@@ -135,6 +205,41 @@ export default function Header() {
                 </DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>
+            
+            {/* Save Dialog */}
+            <Dialog open={saveDialogOpen} onOpenChange={setSaveDialogOpen}>
+              <DialogContent>
+                <DialogHeader>
+                  <DialogTitle>Save Your Design</DialogTitle>
+                  <DialogDescription>
+                    Give your aquascape design a name to save it to your account.
+                  </DialogDescription>
+                </DialogHeader>
+                <div className="py-4">
+                  <Label htmlFor="designName">Design Name</Label>
+                  <Input 
+                    id="designName"
+                    value={designName}
+                    onChange={(e) => setDesignName(e.target.value)}
+                    placeholder="My Aquascape Design"
+                    className="mt-2"
+                  />
+                </div>
+                <DialogFooter>
+                  <Button variant="outline" onClick={() => setSaveDialogOpen(false)}>
+                    Cancel
+                  </Button>
+                  <Button 
+                    onClick={handleSaveProject}
+                    disabled={isSaving || !designName.trim()}
+                    className="ml-2"
+                  >
+                    {isSaving && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+                    Save Design
+                  </Button>
+                </DialogFooter>
+              </DialogContent>
+            </Dialog>
           </>
         )}
         
