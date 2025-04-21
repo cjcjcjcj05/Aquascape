@@ -1,4 +1,4 @@
-# AquaDesign - Aquascaping Design Platform
+# Aquascape - Advanced Aquascaping Design Platform
 
 AquaDesign is an advanced aquascaping design platform that enables users to create, visualize, and share custom aquarium layouts with AI-assisted asset generation and intuitive design tools.
 
