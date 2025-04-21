@@ -36,12 +36,19 @@ export default function PropertyPanel() {
   }
   
   // Check if the selected element is a carpeting plant
-  // This involves finding the original asset by name
-  const assetId = selectedElement.type === 'plants' ? 
-    elements.find(el => el.id === selectedElementId)?.name : null;
+  // Get all plants and find the one matching the selected element's name
+  const allPlants = getAssetsByCategory('plants');
+  const asset = selectedElement.type === 'plants' 
+    ? allPlants.find(a => a.name === selectedElement.name) 
+    : null;
   
-  const asset = assetId ? getAssetById(selectedElement.name) : null;
+  // Check if this plant is a carpeting plant
   const isCarpetingPlant = asset?.isCarpeting || false;
+  
+  // Log for debugging
+  console.log('Selected plant:', selectedElement.name);
+  console.log('Found asset:', asset);
+  console.log('Is carpeting plant:', isCarpetingPlant);
   
   const getElementIcon = (type: string) => {
     switch (type) {
