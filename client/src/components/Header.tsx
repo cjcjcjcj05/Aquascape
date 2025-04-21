@@ -122,25 +122,11 @@ export default function Header() {
                 <DropdownMenuSeparator />
                 <DropdownMenuItem
                   onClick={() => {
-                    try {
-                      localStorage.clear();
-                      toast({
-                        title: "Storage Cleared",
-                        description: "Application data has been reset. Refreshing the page...",
-                      });
-                      setTimeout(() => window.location.reload(), 1500);
-                    } catch (error) {
-                      console.error("Error clearing localStorage:", error);
-                      toast({
-                        title: "Error",
-                        description: "Failed to clear storage.",
-                        variant: "destructive"
-                      });
-                    }
+                    window.open('/reset-storage.html', '_blank');
                   }}
                 >
                   <FaExclamationTriangle className="mr-2 h-4 w-4 text-red-500" />
-                  <span className="text-red-500">Reset Application</span>
+                  <span className="text-red-500">Storage Reset Tool</span>
                 </DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>

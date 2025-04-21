@@ -485,25 +485,109 @@ export const useStore = create<EditorState>()(
             return localStorage.getItem(name);
           } catch (error) {
             console.warn('Error accessing localStorage:', error);
+            
+            // Add a visible notification for users about the error and solution
+            if (document.getElementById('storage-error-notification') === null) {
+              const notification = document.createElement('div');
+              notification.id = 'storage-error-notification';
+              notification.style.cssText = `
+                position: fixed;
+                bottom: 20px;
+                right: 20px;
+                background-color: #fff5f5;
+                border-left: 4px solid #ff4d4f;
+                padding: 10px 20px;
+                box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+                z-index: 9999;
+                font-family: -apple-system, BlinkMacSystemFont, sans-serif;
+                max-width: 400px;
+              `;
+              
+              notification.innerHTML = `
+                <h3 style="margin: 0 0 8px; color: #333;">Storage Error Detected</h3>
+                <p style="margin: 0 0 8px;">We're having trouble accessing your saved data.</p>
+                <a href="/reset-storage.html" target="_blank" style="color: #0070f3; text-decoration: underline;">
+                  Click here to fix the issue
+                </a>
+                <button style="position: absolute; top: 5px; right: 5px; background: none; border: none; cursor: pointer; font-size: 16px;"
+                  onclick="this.parentElement.remove()">×</button>
+              `;
+              
+              document.body.appendChild(notification);
+            }
+            
             return null;
           }
         },
         setItem: (name, value) => {
           try {
-            // Trim history to a reasonable size to avoid quota issues
+            // Aggressively trim history to avoid quota issues
             if (name === 'aquadesign-storage') {
-              const data = JSON.parse(value);
-              if (data && data.state && data.state.history && data.state.history.length > 10) {
-                // Only keep the 10 most recent history states
-                data.state.history = data.state.history.slice(-10);
-                data.state.historyIndex = Math.min(data.state.historyIndex, 9);
-                localStorage.setItem(name, JSON.stringify(data));
-                return;
+              try {
+                const data = JSON.parse(value);
+                if (data && data.state && data.state.history) {
+                  // More aggressive history trimming - only keep 5 most recent states
+                  // This helps prevent quota issues
+                  const MAX_HISTORY = 5; 
+                  if (data.state.history.length > MAX_HISTORY) {
+                    data.state.history = data.state.history.slice(-MAX_HISTORY);
+                    data.state.historyIndex = Math.min(data.state.historyIndex, MAX_HISTORY - 1);
+                    localStorage.setItem(name, JSON.stringify(data));
+                    return;
+                  }
+                }
+              } catch (parseError) {
+                console.warn('Error parsing storage data:', parseError);
+                // Still attempt to set the item even if parsing failed
               }
             }
+            
+            // Make the storage attempt
             localStorage.setItem(name, value);
           } catch (error) {
             console.warn('Error writing to localStorage:', error);
+            
+            // Show error notification
+            if (!document.getElementById('storage-quota-notification')) {
+              const quotaNotification = document.createElement('div');
+              quotaNotification.id = 'storage-quota-notification';
+              quotaNotification.style.cssText = `
+                position: fixed;
+                top: 60px;
+                left: 50%;
+                transform: translateX(-50%);
+                background-color: #fff5f5;
+                border: 1px solid #ff4d4f;
+                border-radius: 4px;
+                padding: 10px 15px;
+                box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+                z-index: 9999;
+                font-family: -apple-system, BlinkMacSystemFont, sans-serif;
+                width: 300px;
+                text-align: center;
+              `;
+              
+              quotaNotification.innerHTML = `
+                <h4 style="margin: 0 0 5px; color: #ff4d4f;">Storage Quota Exceeded</h4>
+                <p style="margin: 0 0 10px; font-size: 13px;">
+                  Your design is too large for browser storage. 
+                  <a href="/reset-storage.html" target="_blank" style="color: #0070f3;">
+                    Clear history
+                  </a> to fix.
+                </p>
+                <button style="position: absolute; top: 5px; right: 5px; background: none; border: none; cursor: pointer;"
+                  onclick="this.parentElement.remove()">×</button>
+              `;
+              
+              document.body.appendChild(quotaNotification);
+              
+              // Auto-remove after 5 seconds
+              setTimeout(() => {
+                if (document.getElementById('storage-quota-notification')) {
+                  document.getElementById('storage-quota-notification').remove();
+                }
+              }, 5000);
+            }
           }
         },
         removeItem: (name) => {
