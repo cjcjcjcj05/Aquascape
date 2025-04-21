@@ -67,6 +67,26 @@ const substrates: Asset[] = [
 // Hardscape (rocks, driftwood)
 const hardscape: Asset[] = [
   {
+    id: "hardscape-dragonstone-1",
+    category: "hardscape",
+    type: "rock",
+    name: "Dragonstone 1",
+    description: "Tall textured porous stone with unique honeycomb patterns and striking vertical form",
+    src: "/assets/hardscape/dragonstone-1.png",
+    defaultWidth: 100,
+    defaultHeight: 140
+  },
+  {
+    id: "hardscape-dragonstone-2",
+    category: "hardscape",
+    type: "rock",
+    name: "Dragonstone 2",
+    description: "Wide textured porous stone with honeycomb patterns, perfect for creating terraces",
+    src: "/assets/hardscape/dragonstone-2.png",
+    defaultWidth: 140,
+    defaultHeight: 80
+  },
+  {
     id: "hardscape-1",
     category: "hardscape",
     type: "rock",
