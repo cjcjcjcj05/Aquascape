@@ -13,6 +13,7 @@ import { useStore } from "@/store/editorStore";
 import { Asset, CanvasElement, ElevationPoint } from "@/lib/types";
 import { useToast } from "@/hooks/use-toast";
 import useImage from "use-image";
+import { getVariantColor } from "@/lib/substrateData";
 import { 
   FaSearchMinus, 
   FaSearchPlus, 
@@ -259,7 +260,7 @@ export default function Canvas() {
                 context.closePath();
                 context.fillStrokeShape(shape);
               }}
-              fill={substrateSettings.color}
+              fill={getVariantColor(substrateSettings.typeId, substrateSettings.variantId)}
               stroke="#a18a68"
               strokeWidth={1}
               shadowColor="rgba(0, 0, 0, 0.1)"

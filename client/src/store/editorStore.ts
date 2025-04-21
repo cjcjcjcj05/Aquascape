@@ -29,7 +29,7 @@ interface EditorState {
   setSelectedElement: (id: string | null) => void;
   setCurrentCategory: (category: AssetCategory) => void;
   setSubstrateType: (typeId: string) => void;
-  setSubstrateColor: (color: string) => void;
+  setSubstrateVariant: (variantId: string) => void;
   setSubstrateBaseHeight: (height: number) => void;
   addElevationPoint: (point: Omit<ElevationPoint, "id">) => void;
   updateElevationPoint: (id: string, point: Partial<ElevationPoint>) => void;
@@ -55,8 +55,8 @@ export const useStore = create<EditorState>()(
       selectedElement: null,
       currentCategory: 'substrate',
       substrateSettings: {
-        type: 'sand-nature',
-        color: '#E9DAC1',
+        typeId: 'sand',
+        variantId: 'sand-light',
         elevationPoints: [
           { id: 'point-1', x: 0, y: 0 },
           { id: 'point-2', x: 25, y: 10 },
@@ -116,21 +116,24 @@ export const useStore = create<EditorState>()(
       setSubstrateType: (typeId) => {
         const { pushHistory, substrateSettings } = get();
         pushHistory();
+        // When changing substrate type, reset to the first variant of that type
+        const variantId = `${typeId}-${typeId === 'sand' ? 'light' : typeId === 'aquasoil' ? 'dark' : 'natural'}`;
         set({ 
           substrateSettings: { 
             ...substrateSettings, 
-            type: typeId 
+            typeId, 
+            variantId
           } 
         });
       },
       
-      setSubstrateColor: (color) => {
+      setSubstrateVariant: (variantId) => {
         const { pushHistory, substrateSettings } = get();
         pushHistory();
         set({ 
           substrateSettings: { 
             ...substrateSettings, 
-            color 
+            variantId
           } 
         });
       },
