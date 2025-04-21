@@ -263,32 +263,34 @@ export const useStore = create<EditorState>()(
         // Get the bottom 20% of the tank for placing plants
         const bottomY = stageHeight * 0.8;
         
-        // Create a grid of plants that covers the entire substrate
-        // More columns and rows for dense coverage
-        const columns = 12;
-        const rows = 3;
+        // Create an ordered 8×4 grid of plants as requested
+        const columns = 8;
+        const rows = 4;
         
-        // No margin - cover the entire width
-        const margin = 0;
-        const usableWidth = stageWidth;
+        // Slight margin on each side for a more natural look
+        const margin = stageWidth * 0.05;
+        const usableWidth = stageWidth - (margin * 2);
         
         // Calculate spacing
         const columnSpacing = usableWidth / columns;
         const defaultHeight = asset.defaultHeight || 30;
-        const rowSpacing = defaultHeight * 0.6; // Slightly overlap rows for dense carpet
+        const rowSpacing = defaultHeight * 0.8; // Some overlap to look connected
         
         const timestamp = Date.now(); // Use same timestamp for batch to avoid duplicate IDs
         
-        // Create plants
+        // Create plants in a grid pattern
         for (let row = 0; row < rows; row++) {
           for (let col = 0; col < columns; col++) {
-            // Add some randomness to positions
-            const randomOffsetX = Math.random() * 30 - 15;
-            const randomOffsetY = Math.random() * 15 - 7;
-            const randomScale = 0.8 + (Math.random() * 0.4); // 0.8 to 1.2
+            // Add slight randomness to positions (not too wild)
+            const randomOffsetX = Math.random() * 10 - 5; // ±5px
+            const randomOffsetY = Math.random() * 8 - 4;  // ±4px
+            const randomScale = 0.9 + (Math.random() * 0.2); // 0.9 to 1.1 (subtle variation)
             
             const x = margin + (col * columnSpacing) + randomOffsetX;
             const y = bottomY + (row * rowSpacing) + randomOffsetY;
+            
+            // Gentle rotation (-20 to +20 degrees) to look natural but not wild
+            const gentleRotation = Math.random() * 40 - 20;
             
             const newElement: CanvasElement = {
               id: `element-${timestamp}-${row}-${col}`,
@@ -299,29 +301,36 @@ export const useStore = create<EditorState>()(
               y: y,
               width: (asset.defaultWidth || 100) * randomScale,
               height: defaultHeight * randomScale,
-              rotation: Math.random() * 360, // Random rotation for natural look
+              rotation: gentleRotation,
               depth: 'front',
             };
             get().addElement(newElement);
           }
         }
         
-        // Add some plants on the edges and in gaps to create an irregular natural look
-        for (let i = 0; i < 10; i++) {
-          const randomX = Math.random() * stageWidth;
-          const randomY = bottomY + Math.random() * (stageHeight - bottomY);
-          const randomScale = 0.7 + (Math.random() * 0.6); // 0.7 to 1.3
+        // Add only a few extra plants in the gaps for a fuller look
+        // But not too many to keep it orderly
+        for (let i = 0; i < 5; i++) {
+          // Place these mostly along edges or between rows
+          const col = Math.floor(Math.random() * (columns + 1));
+          const row = Math.floor(Math.random() * (rows + 1)) - 0.5;
+          
+          const x = margin + (col * columnSpacing);
+          const y = bottomY + (row * rowSpacing);
+          
+          // Gentle rotation just like the main grid
+          const gentleRotation = Math.random() * 40 - 20;
           
           const newElement: CanvasElement = {
-            id: `element-${timestamp}-edge-${i}`,
+            id: `element-${timestamp}-extra-${i}`,
             type: asset.category,
             name: asset.name,
             src: asset.src,
-            x: randomX,
-            y: randomY,
-            width: (asset.defaultWidth || 100) * randomScale,
-            height: defaultHeight * randomScale,
-            rotation: Math.random() * 360,
+            x: x,
+            y: y,
+            width: asset.defaultWidth || 100,
+            height: defaultHeight,
+            rotation: gentleRotation,
             depth: 'front',
           };
           get().addElement(newElement);
