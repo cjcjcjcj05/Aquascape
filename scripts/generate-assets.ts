@@ -1,7 +1,12 @@
 import OpenAI from 'openai';
 import fs from 'fs';
 import path from 'path';
+import { fileURLToPath } from 'url';
 import { AssetCategory } from '../client/src/lib/types';
+
+// ES modules equivalent for __dirname
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 // You'll need to set your OpenAI API key
 // Use the OPENAI_API_KEY environment variable or set it here
@@ -10,49 +15,23 @@ const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
 // The newest OpenAI model is "gpt-4o" which was released May 13, 2024. do not change this unless explicitly requested by the user
 const model = "gpt-4o";
 
-// Define asset categories
+// Define asset categories - using a smaller subset for testing
 const categories: Record<AssetCategory, string[]> = {
   substrate: [
     "Fine white sand",
     "Black aquasoil substrate",
-    "Natural river gravel",
-    "Planted aquarium substrate",
-    "Coarse decorative sand",
-    "Crushed coral substrate",
   ],
   hardscape: [
     "Dragon stone rock",
     "Spider wood driftwood",
-    "Seiryu stone",
-    "Manzanita driftwood",
-    "Lava rock",
-    "Slate stone",
-    "Ohko stone",
-    "Malaysian driftwood",
   ],
   plants: [
     "Amazon sword (Echinodorus)",
-    "Java fern (Microsorum pteropus)",
     "Anubias nana",
-    "Dwarf hairgrass (Eleocharis acicularis)",
-    "Water wisteria (Hygrophila difformis)",
-    "Rotala rotundifolia",
-    "Ludwigia repens",
-    "Vallisneria",
-    "Cryptocoryne wendtii",
-    "Monte Carlo (Micranthemum tweediei)",
   ],
   fish: [
-    "Neon tetra",
     "Betta fish",
-    "Guppy",
-    "Corydoras catfish",
-    "Otocinclus catfish",
     "Cherry shrimp",
-    "Amano shrimp",
-    "Celestial pearl danio",
-    "German blue ram",
-    "Ember tetra",
   ],
 };
 
@@ -186,7 +165,7 @@ async function generateItemDescriptions(
  */
 async function generateAssetData() {
   try {
-    const allAssets = [];
+    const allAssets: any[] = [];
     let id = 1;
 
     for (const [category, items] of Object.entries(categories)) {
