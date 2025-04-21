@@ -143,16 +143,14 @@ export default function AuthPage() {
                             </FormControl>
                             <FormMessage />
                             <div className="pt-1 text-right">
-                              <Button 
-                                variant="link" 
-                                className="p-0 h-auto text-sm" 
-                                onClick={(e) => {
-                                  e.preventDefault();
-                                  window.location.href = "/forgot-password";
-                                }}
-                              >
-                                Forgot password?
-                              </Button>
+                              <Link href="/forgot-password">
+                                <Button 
+                                  variant="link" 
+                                  className="p-0 h-auto text-sm" 
+                                >
+                                  Forgot password?
+                                </Button>
+                              </Link>
                             </div>
                           </FormItem>
                         )}
