@@ -171,6 +171,17 @@ const hardscape: Asset[] = [
 // Plants
 const plants: Asset[] = [
   {
+    id: "plant-eleocharis-mini",
+    category: "plants",
+    type: "foreground",
+    name: "Eleocharis acicularis 'Mini'",
+    description: "Delicate, grass-like carpeting plant perfect for creating natural foreground lawns.",
+    src: "/assets/plants/eleocharis_mini.png",
+    defaultWidth: 120,
+    defaultHeight: 40,
+    isCarpeting: true
+  },
+  {
     id: "plant-1",
     category: "plants",
     type: "foreground",
@@ -178,7 +189,8 @@ const plants: Asset[] = [
     description: "Carpet plant",
     src: "https://images.unsplash.com/photo-1643306963178-9ec148e8c2e6?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80",
     defaultWidth: 100,
-    defaultHeight: 50
+    defaultHeight: 50,
+    isCarpeting: true
   },
   {
     id: "plant-2",
@@ -228,7 +240,8 @@ const plants: Asset[] = [
     description: "Low-growing carpeting plant with small round leaves, creates lush green foreground.",
     src: "/assets/plants/monte_carlo.png",
     defaultWidth: 150,
-    defaultHeight: 30
+    defaultHeight: 30,
+    isCarpeting: true
   },
   {
     id: "plant-7",
