@@ -67,6 +67,16 @@ const substrates: Asset[] = [
 // Hardscape (rocks, driftwood)
 const hardscape: Asset[] = [
   {
+    id: "hardscape-blue-seiryu-1",
+    category: "hardscape",
+    type: "rock",
+    name: "Blue Seiryu Stone 1",
+    description: "Angular blue-gray stone with dramatic layered textures and sharp edges, perfect for creating mountainous aquascapes",
+    src: "/assets/hardscape/blue_seiryu_1.png",
+    defaultWidth: 120,
+    defaultHeight: 160
+  },
+  {
     id: "hardscape-dragonstone-1",
     category: "hardscape",
     type: "rock",
