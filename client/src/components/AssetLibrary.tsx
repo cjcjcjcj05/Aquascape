@@ -160,14 +160,6 @@ function AssetItem({ asset }: { asset: Asset }) {
     }),
   }));
   
-  const [imageError, setImageError] = useState(false);
-  const imgSrc = imageError ? '/assets/hardscape/placeholder.png' : asset.src;
-  
-  // Fix image paths if needed (handling the case for dragonstone specifically)
-  const fixedSrc = imgSrc.includes('dragonstone') && !imgSrc.startsWith('http') 
-    ? imgSrc.replace(/^\/assets\//, '/assets/') 
-    : imgSrc;
-  
   return (
     <div 
       ref={drag}
@@ -176,13 +168,9 @@ function AssetItem({ asset }: { asset: Asset }) {
       <div className="aspect-video bg-transparent rounded-md overflow-hidden mb-2 border border-gray-200">
         <div className="w-full h-full flex items-center justify-center bg-white">
           <img 
-            src={fixedSrc}
+            src={asset.src} 
             alt={asset.name} 
-            className="max-w-full max-h-full object-contain p-1"
-            onError={() => {
-              console.error(`Failed to load image: ${asset.src}`);
-              setImageError(true);
-            }}
+            className="max-w-full max-h-full object-contain p-1" 
           />
         </div>
       </div>
