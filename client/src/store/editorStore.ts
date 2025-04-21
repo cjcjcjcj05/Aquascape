@@ -260,46 +260,71 @@ export const useStore = create<EditorState>()(
         const stageWidth = tankDimensions.width * scaleFactor;
         const stageHeight = tankDimensions.height * scaleFactor;
         
-        // Get the bottom 25% of the tank for placing plants
-        const bottomY = stageHeight * 0.75;
+        // Get the bottom 20% of the tank for placing plants
+        const bottomY = stageHeight * 0.8;
         
-        // Create a grid of plants - 5 columns, 2 rows
-        const columns = 5;
-        const rows = 2;
+        // Create a grid of plants that covers the entire substrate
+        // More columns and rows for dense coverage
+        const columns = 12;
+        const rows = 3;
         
-        // Leave some margin on the sides
-        const margin = stageWidth * 0.1;
-        const usableWidth = stageWidth - (margin * 2);
+        // No margin - cover the entire width
+        const margin = 0;
+        const usableWidth = stageWidth;
         
         // Calculate spacing
         const columnSpacing = usableWidth / columns;
         const defaultHeight = asset.defaultHeight || 30;
-        const rowSpacing = defaultHeight * 0.7;
+        const rowSpacing = defaultHeight * 0.6; // Slightly overlap rows for dense carpet
+        
+        const timestamp = Date.now(); // Use same timestamp for batch to avoid duplicate IDs
         
         // Create plants
         for (let row = 0; row < rows; row++) {
           for (let col = 0; col < columns; col++) {
             // Add some randomness to positions
-            const randomOffsetX = Math.random() * 20 - 10;
-            const randomOffsetY = Math.random() * 10 - 5;
+            const randomOffsetX = Math.random() * 30 - 15;
+            const randomOffsetY = Math.random() * 15 - 7;
+            const randomScale = 0.8 + (Math.random() * 0.4); // 0.8 to 1.2
             
             const x = margin + (col * columnSpacing) + randomOffsetX;
             const y = bottomY + (row * rowSpacing) + randomOffsetY;
             
             const newElement: CanvasElement = {
-              id: `element-${Date.now()}-${row}-${col}`,
+              id: `element-${timestamp}-${row}-${col}`,
               type: asset.category,
               name: asset.name,
               src: asset.src,
               x: x,
               y: y,
-              width: asset.defaultWidth || 100,
-              height: defaultHeight,
-              rotation: Math.random() * 30 - 15, // Random rotation between -15 and 15 degrees
-              depth: 'front', // Use front instead of foreground
+              width: (asset.defaultWidth || 100) * randomScale,
+              height: defaultHeight * randomScale,
+              rotation: Math.random() * 360, // Random rotation for natural look
+              depth: 'front',
             };
             get().addElement(newElement);
           }
+        }
+        
+        // Add some plants on the edges and in gaps to create an irregular natural look
+        for (let i = 0; i < 10; i++) {
+          const randomX = Math.random() * stageWidth;
+          const randomY = bottomY + Math.random() * (stageHeight - bottomY);
+          const randomScale = 0.7 + (Math.random() * 0.6); // 0.7 to 1.3
+          
+          const newElement: CanvasElement = {
+            id: `element-${timestamp}-edge-${i}`,
+            type: asset.category,
+            name: asset.name,
+            src: asset.src,
+            x: randomX,
+            y: randomY,
+            width: (asset.defaultWidth || 100) * randomScale,
+            height: defaultHeight * randomScale,
+            rotation: Math.random() * 360,
+            depth: 'front',
+          };
+          get().addElement(newElement);
         }
         
         get().pushHistory();
