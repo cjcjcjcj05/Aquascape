@@ -1,8 +1,16 @@
-import { useRef, useState } from "react";
-import { Stage, Layer, Rect, Image as KonvaImage, Transformer } from "react-konva";
+import { useRef, useState, useEffect } from "react";
+import { 
+  Stage, 
+  Layer, 
+  Rect, 
+  Image as KonvaImage, 
+  Transformer, 
+  Line,
+  Shape
+} from "react-konva";
 import { useDrop } from "react-dnd";
 import { useStore } from "@/store/editorStore";
-import { Asset, CanvasElement } from "@/lib/types";
+import { Asset, CanvasElement, ElevationPoint } from "@/lib/types";
 import { useToast } from "@/hooks/use-toast";
 import useImage from "use-image";
 import { 
@@ -107,14 +115,35 @@ export default function Canvas() {
     undo,
     redo,
     canUndo,
-    canRedo
+    canRedo,
+    substrateSettings
   } = useStore();
   
   // Calculate stage dimensions based on tank dimensions and a scale factor
   const scaleFactor = 10; // 1cm = 10px
   const stageWidth = tankDimensions.width * scaleFactor;
   const stageHeight = tankDimensions.height * scaleFactor;
-  const substrateHeight = 50; // Height of substrate in pixels
+  
+  // Generate substrate points for the shape
+  const calculateSubstratePoints = (): number[] => {
+    const baseHeight = (substrateSettings.baseHeight / 100) * stageHeight;
+    const sortedPoints = [...substrateSettings.elevationPoints].sort((a, b) => a.x - b.x);
+    
+    // Start with bottom left
+    let points: number[] = [0, stageHeight];
+    
+    // Add elevation points
+    sortedPoints.forEach(point => {
+      const x = (point.x / 100) * stageWidth;
+      const y = stageHeight - baseHeight - ((point.y / 100) * baseHeight);
+      points.push(x, y);
+    });
+    
+    // Add bottom right and close the shape
+    points.push(stageWidth, stageHeight);
+    
+    return points;
+  };
   
   // Setup drop target for drag and drop
   const [, drop] = useDrop({
@@ -215,14 +244,26 @@ export default function Canvas() {
               cornerRadius={4}
             />
             
-            {/* Substrate */}
-            <Rect
-              x={0}
-              y={stageHeight - substrateHeight}
-              width={stageWidth}
-              height={substrateHeight}
-              fill="#E9DAC1"
-              cornerRadius={[0, 0, 5, 5]}
+            {/* Substrate with elevation */}
+            <Shape
+              sceneFunc={(context, shape) => {
+                const points = calculateSubstratePoints();
+                context.beginPath();
+                context.moveTo(points[0], points[1]);
+                
+                for (let i = 2; i < points.length; i += 2) {
+                  context.lineTo(points[i], points[i + 1]);
+                }
+                
+                context.closePath();
+                context.fillStrokeShape(shape);
+              }}
+              fill={substrateSettings.color}
+              stroke="#a18a68"
+              strokeWidth={1}
+              shadowColor="rgba(0, 0, 0, 0.1)"
+              shadowBlur={5}
+              shadowOffset={{ x: 0, y: -1 }}
             />
             
             {/* Render Elements */}

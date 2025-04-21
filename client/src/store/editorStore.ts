@@ -74,14 +74,15 @@ export const useStore = create<EditorState>()(
       
       // Push current state to history
       pushHistory: () => {
-        const { tankDimensions, elements, selectedElement, currentCategory, historyIndex, history } = get();
+        const { tankDimensions, elements, selectedElement, currentCategory, historyIndex, history, substrateSettings } = get();
         
         // Create new history state
         const newState: HistoryState = {
           tankDimensions: { ...tankDimensions },
           elements: JSON.parse(JSON.stringify(elements)),
           selectedElement,
-          currentCategory
+          currentCategory,
+          substrateSettings: JSON.parse(JSON.stringify(substrateSettings))
         };
         
         // Remove future history if we're not at the end
@@ -265,6 +266,7 @@ export const useStore = create<EditorState>()(
             elements: previousState.elements,
             selectedElement: previousState.selectedElement,
             currentCategory: previousState.currentCategory,
+            substrateSettings: previousState.substrateSettings,
             historyIndex: newIndex,
             canUndo: newIndex > 0,
             canRedo: true
@@ -284,6 +286,7 @@ export const useStore = create<EditorState>()(
             elements: nextState.elements,
             selectedElement: nextState.selectedElement,
             currentCategory: nextState.currentCategory,
+            substrateSettings: nextState.substrateSettings,
             historyIndex: newIndex,
             canUndo: true,
             canRedo: newIndex < history.length - 1
