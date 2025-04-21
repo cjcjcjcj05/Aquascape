@@ -18,8 +18,8 @@ export default function TankDimensionsForm({ dimensions, onChange }: TankDimensi
     }
   };
   
-  // Calculate volume in liters
-  const volumeLiters = (dimensions.width * dimensions.depth * dimensions.height) / 1000;
+  // Calculate volume in gallons (dimensions are in inches)
+  const volumeGallons = (dimensions.width * dimensions.depth * dimensions.height) / 231;
   
   return (
     <div className="bg-gray-50 p-3 rounded-lg">
@@ -34,7 +34,7 @@ export default function TankDimensionsForm({ dimensions, onChange }: TankDimensi
               onChange={(e) => handleChange('width', e.target.value)}
               className="w-full px-2 py-1 border border-gray-300 rounded-l text-sm" 
             />
-            <span className="bg-gray-100 text-ui-light px-2 py-1 text-xs flex items-center border border-l-0 border-gray-300 rounded-r">cm</span>
+            <span className="bg-gray-100 text-ui-light px-2 py-1 text-xs flex items-center border border-l-0 border-gray-300 rounded-r">in</span>
           </div>
         </div>
         <div className="flex-1">
@@ -46,7 +46,7 @@ export default function TankDimensionsForm({ dimensions, onChange }: TankDimensi
               onChange={(e) => handleChange('depth', e.target.value)}
               className="w-full px-2 py-1 border border-gray-300 rounded-l text-sm" 
             />
-            <span className="bg-gray-100 text-ui-light px-2 py-1 text-xs flex items-center border border-l-0 border-gray-300 rounded-r">cm</span>
+            <span className="bg-gray-100 text-ui-light px-2 py-1 text-xs flex items-center border border-l-0 border-gray-300 rounded-r">in</span>
           </div>
         </div>
       </div>
@@ -60,7 +60,7 @@ export default function TankDimensionsForm({ dimensions, onChange }: TankDimensi
               onChange={(e) => handleChange('height', e.target.value)}
               className="w-full px-2 py-1 border border-gray-300 rounded-l text-sm" 
             />
-            <span className="bg-gray-100 text-ui-light px-2 py-1 text-xs flex items-center border border-l-0 border-gray-300 rounded-r">cm</span>
+            <span className="bg-gray-100 text-ui-light px-2 py-1 text-xs flex items-center border border-l-0 border-gray-300 rounded-r">in</span>
           </div>
         </div>
         <div className="flex-1">
@@ -68,11 +68,11 @@ export default function TankDimensionsForm({ dimensions, onChange }: TankDimensi
           <div className="flex">
             <Input 
               type="number" 
-              value={volumeLiters.toFixed(1)}
+              value={volumeGallons.toFixed(1)}
               disabled
               className="w-full px-2 py-1 border border-gray-300 rounded-l text-sm bg-gray-50" 
             />
-            <span className="bg-gray-100 text-ui-light px-2 py-1 text-xs flex items-center border border-l-0 border-gray-300 rounded-r">L</span>
+            <span className="bg-gray-100 text-ui-light px-2 py-1 text-xs flex items-center border border-l-0 border-gray-300 rounded-r">gal</span>
           </div>
         </div>
       </div>

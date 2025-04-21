@@ -121,7 +121,7 @@ export default function Canvas() {
   } = useStore();
   
   // Calculate stage dimensions based on tank dimensions and a scale factor
-  const scaleFactor = 10; // 1cm = 10px
+  const scaleFactor = 25.4; // 1in = 25.4px (approximate pixel density)
   const stageWidth = tankDimensions.width * scaleFactor;
   const stageHeight = tankDimensions.height * scaleFactor;
   
