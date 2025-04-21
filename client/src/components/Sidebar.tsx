@@ -78,7 +78,7 @@ export default function Sidebar() {
       )}
       
       {/* Content Area - Flexible Height with Scrolling */}
-      <div className="grow" style={{ maxHeight: 'calc(100vh - 250px)' }}>
+      <div className="grow flex flex-col" style={{ height: 'calc(100vh - 250px)' }}>
         {activeTab === 'library' ? (
           <AssetLibrary />
         ) : (
