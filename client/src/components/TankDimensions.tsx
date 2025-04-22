@@ -25,6 +25,8 @@ const GALLON_TO_LITER = 3.78541;
 
 export default function TankDimensionsForm({ dimensions, onChange }: TankDimensionsProps) {
   const [isExpanded, setIsExpanded] = useState(true);
+  const [selectedPreset, setSelectedPreset] = useState<string | null>(null);
+  
   // Imperial unit state (inches)
   const [imperialDimensions, setImperialDimensions] = useState({
     width: Math.round(dimensions.width * CM_TO_INCH * 10) / 10,
@@ -39,6 +41,14 @@ export default function TankDimensionsForm({ dimensions, onChange }: TankDimensi
       depth: Math.round(dimensions.depth * CM_TO_INCH * 10) / 10,
       height: Math.round(dimensions.height * CM_TO_INCH * 10) / 10
     });
+    
+    // Update selected preset if dimensions match a preset
+    const matchingPreset = tankPresets.find(preset => 
+      Math.abs(preset.width - dimensions.width) < 0.1 &&
+      Math.abs(preset.height - dimensions.height) < 0.1 &&
+      Math.abs(preset.depth - dimensions.depth) < 0.1
+    );
+    setSelectedPreset(matchingPreset?.name || null);
   }, [dimensions]);
   
   const handleImperialChange = (field: keyof TankDimensions, value: string) => {
@@ -55,6 +65,9 @@ export default function TankDimensionsForm({ dimensions, onChange }: TankDimensi
         ...dimensions,
         [field]: Math.round(numValue * INCH_TO_CM)
       });
+      
+      // Clear selected preset when manually changing dimensions
+      setSelectedPreset(null);
     }
   };
 
@@ -66,6 +79,7 @@ export default function TankDimensionsForm({ dimensions, onChange }: TankDimensi
         height: preset.height,
         depth: preset.depth
       });
+      setSelectedPreset(presetName);
     }
   };
   
@@ -90,14 +104,14 @@ export default function TankDimensionsForm({ dimensions, onChange }: TankDimensi
         <>
           <div className="mb-4">
             <Label className="block text-xs text-ui-light mb-1">Preset Sizes</Label>
-            <Select onValueChange={handlePresetSelect}>
+            <Select value={selectedPreset || ""} onValueChange={handlePresetSelect}>
               <SelectTrigger>
                 <SelectValue placeholder="Choose a standard size..." />
               </SelectTrigger>
               <SelectContent>
                 {tankPresets.map(preset => (
                   <SelectItem key={preset.name} value={preset.name}>
-                    {preset.name} ({preset.width.toFixed(1)}×{preset.height.toFixed(1)}×{preset.depth.toFixed(1)}cm)
+                    {preset.name} ({(preset.width * CM_TO_INCH).toFixed(0)}×{(preset.height * CM_TO_INCH).toFixed(0)}×{(preset.depth * CM_TO_INCH).toFixed(0)}")
                   </SelectItem>
                 ))}
               </SelectContent>
