@@ -67,7 +67,7 @@ export default function TankDimensionsForm({ dimensions, onChange }: TankDimensi
         [field]: Math.round(numValue * INCH_TO_CM)
       });
       
-      // Clear selected preset when manually changing dimensions
+      // Reset the tank preset selection when dimensions are manually changed
       setSelectedPreset("");
     }
   };
@@ -115,7 +115,6 @@ export default function TankDimensionsForm({ dimensions, onChange }: TankDimensi
                 <SelectValue placeholder="Choose a standard size..." />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="">Choose a standard size...</SelectItem>
                 {tankPresets.map(preset => (
                   <SelectItem key={preset.name} value={preset.name}>
                     {preset.name} ({preset.width}×{preset.height}×{preset.depth}")
