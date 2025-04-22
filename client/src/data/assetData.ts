@@ -44,6 +44,16 @@ const assetData: Asset[] = [
     defaultWidth: 220,
     defaultHeight: 140
   },
+  {
+    id: "5",
+    category: "hardscape",
+    type: "rock",
+    name: "Blue Seiryu Stone",
+    description: "Elegant blue-gray layered stone with sharp edges and intricate textures, perfect for creating mountain-like formations.",
+    src: "/assets/hardscape/blue_seiryu_1.png",
+    defaultWidth: 200,
+    defaultHeight: 150
+  },
   
   // Plant assets
   {
@@ -55,6 +65,36 @@ const assetData: Asset[] = [
     src: "/assets/plants/eleocharis_mini.png",
     defaultWidth: 150,
     defaultHeight: 50
+  },
+  {
+    id: "7",
+    category: "plants",
+    type: "midground",
+    name: "Anubias",
+    description: "Hardy plant with thick, dark green leaves that thrives attached to hardscape. Slow-growing and low-maintenance.",
+    src: "/assets/plants/anubias.png",
+    defaultWidth: 100,
+    defaultHeight: 80
+  },
+  {
+    id: "8",
+    category: "plants",
+    type: "midground",
+    name: "Java Fern",
+    description: "Versatile plant with distinctive elongated leaves. Best attached to hardscape rather than planted in substrate.",
+    src: "/assets/plants/java_fern.png",
+    defaultWidth: 120,
+    defaultHeight: 100
+  },
+  {
+    id: "9",
+    category: "plants",
+    type: "background",
+    name: "Hygrophila Pinnatifida",
+    description: "Unique plant with textured, feather-like foliage in bronze-green colors. Can be planted in substrate or attached to hardscape.",
+    src: "/assets/plants/hygrophila_pinnatifida.png",
+    defaultWidth: 140,
+    defaultHeight: 180
   },
   
   // Fish assets

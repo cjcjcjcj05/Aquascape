@@ -52,7 +52,20 @@ const CanvasElementComponent = ({
 }) => {
   const shapeRef = useRef<any>(null);
   const trRef = useRef<any>(null);
-  const [image, status] = useImage(element.src);
+  
+  // Fix image loading by ensuring the path is correct
+  const imagePath = element.src.startsWith('/') 
+    ? element.src 
+    : `/${element.src}`;
+    
+  const [image, status] = useImage(imagePath);
+  
+  // Log image loading status for debugging
+  useEffect(() => {
+    if (status === 'failed') {
+      console.error(`Failed to load image: ${imagePath}`);
+    }
+  }, [status, imagePath]);
   
   // Update transformer on selection change
   useEffect(() => {
@@ -63,9 +76,34 @@ const CanvasElementComponent = ({
     }
   }, [isSelected]);
   
-  // Don't render the image until it's loaded
+  // Return a placeholder rectangle while the image is loading
   if (status === 'loading' || !image) {
-    return null;
+    // Ensure we have valid dimensions for the placeholder
+    const width = Math.max(10, element.width || 100);
+    const height = Math.max(10, element.height || 100);
+    
+    return (
+      <Rect
+        x={element.x}
+        y={element.y}
+        width={width}
+        height={height}
+        fill="#d1d5db"
+        opacity={0.6}
+        stroke="#9ca3af"
+        strokeWidth={1}
+        cornerRadius={3}
+        draggable
+        onClick={(e) => {
+          e.cancelBubble = true;
+          onSelect();
+        }}
+        onTap={(e) => {
+          e.cancelBubble = true;
+          onSelect();
+        }}
+      />
+    );
   }
   
   // Ensure we have valid dimensions (prevent zero width/height)
