@@ -107,7 +107,7 @@ export default function Sidebar() {
           <AssetLibrary />
         ) : (
           <div className="p-4">
-            <CategoryNav />
+            {/* Layer content goes here - removed CategoryNav from here */}
           </div>
         )}
       </div>

@@ -7,6 +7,7 @@ import { substrateTypes } from "@/lib/substrateData";
 import { FaSearch } from "react-icons/fa";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
+import CategoryNav from "./CategoryNav";
 
 // Substrate-specific library component
 function SubstrateLibrary() {
@@ -43,6 +44,9 @@ function SubstrateLibrary() {
         maxHeight: '100%'
       }}
     >
+      {/* Category Navigation */}
+      <CategoryNav />
+      
       <div className="p-4 pb-2 sticky top-0 bg-white z-10">
         <div className="mb-3">
           <div className="relative">
@@ -208,6 +212,9 @@ export default function AssetLibrary() {
         maxHeight: '100%'
       }}
     >
+      {/* Category Navigation */}
+      <CategoryNav />
+      
       <div className="p-4 pb-2 sticky top-0 bg-white z-10">
         <div className="mb-3">
           <div className="relative">
