@@ -36,17 +36,18 @@ export default function TankDimensionsForm({ dimensions, onChange }: TankDimensi
   
   // Update imperial units when metric dimensions change
   useEffect(() => {
-    setImperialDimensions({
+    const newImperialDimensions = {
       width: Math.round(dimensions.width * CM_TO_INCH * 10) / 10,
       depth: Math.round(dimensions.depth * CM_TO_INCH * 10) / 10,
       height: Math.round(dimensions.height * CM_TO_INCH * 10) / 10
-    });
+    };
+    setImperialDimensions(newImperialDimensions);
     
     // Update selected preset if dimensions match a preset
     const matchingPreset = tankPresets.find(preset => 
-      Math.abs(preset.width - dimensions.width) < 0.1 &&
-      Math.abs(preset.height - dimensions.height) < 0.1 &&
-      Math.abs(preset.depth - dimensions.depth) < 0.1
+      Math.abs(preset.width - newImperialDimensions.width) < 0.1 &&
+      Math.abs(preset.height - newImperialDimensions.height) < 0.1 &&
+      Math.abs(preset.depth - newImperialDimensions.depth) < 0.1
     );
     setSelectedPreset(matchingPreset?.name || null);
   }, [dimensions]);
@@ -74,10 +75,11 @@ export default function TankDimensionsForm({ dimensions, onChange }: TankDimensi
   const handlePresetSelect = (presetName: string) => {
     const preset = tankPresets.find(p => p.name === presetName);
     if (preset) {
+      // Convert preset inches to centimeters for the store
       onChange({
-        width: preset.width,
-        height: preset.height,
-        depth: preset.depth
+        width: Math.round(preset.width * INCH_TO_CM),
+        height: Math.round(preset.height * INCH_TO_CM),
+        depth: Math.round(preset.depth * INCH_TO_CM)
       });
       setSelectedPreset(presetName);
     }
@@ -111,7 +113,7 @@ export default function TankDimensionsForm({ dimensions, onChange }: TankDimensi
               <SelectContent>
                 {tankPresets.map(preset => (
                   <SelectItem key={preset.name} value={preset.name}>
-                    {preset.name} ({(preset.width * CM_TO_INCH).toFixed(0)}×{(preset.height * CM_TO_INCH).toFixed(0)}×{(preset.depth * CM_TO_INCH).toFixed(0)}")
+                    {preset.name} ({preset.width}×{preset.height}×{preset.depth}")
                   </SelectItem>
                 ))}
               </SelectContent>
