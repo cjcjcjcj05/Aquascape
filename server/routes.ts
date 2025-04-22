@@ -289,6 +289,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Asset generation API removed
+
   const httpServer = createServer(app);
   return httpServer;
 }
