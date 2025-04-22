@@ -285,22 +285,50 @@ export default function Canvas() {
   
   // Calculate stage dimensions based on tank dimensions and a scale factor
   const scaleFactor = 10; // 1cm = 10px
-  const stageWidth = tankDimensions.width * scaleFactor;
-  const stageHeight = tankDimensions.height * scaleFactor;
+  
+  // Ensure we have valid numbers for dimensions
+  const safeWidth = tankDimensions?.width || 60; // Default to 60 if width is missing or NaN
+  const safeHeight = tankDimensions?.height || 36; // Default to 36 if height is missing or NaN
+  
+  // Convert to numbers and apply safeguards
+  const stageWidth = Number.isNaN(safeWidth * scaleFactor) ? 600 : safeWidth * scaleFactor;
+  const stageHeight = Number.isNaN(safeHeight * scaleFactor) ? 360 : safeHeight * scaleFactor;
   
   // Generate substrate points for the shape
   const calculateSubstratePoints = (): number[] => {
-    const baseHeight = (substrateSettings.baseHeight / 100) * stageHeight;
-    const sortedPoints = [...substrateSettings.elevationPoints].sort((a, b) => a.x - b.x);
+    // Ensure we have valid values
+    const baseHeight = Number.isNaN((substrateSettings?.baseHeight || 30) / 100 * stageHeight) 
+      ? 30 
+      : (substrateSettings?.baseHeight || 30) / 100 * stageHeight;
+    
+    // Default elevation points if missing or invalid
+    const defaultPoints = [
+      { id: 'point-1', x: 0, y: 0 },
+      { id: 'point-2', x: 25, y: 10 },
+      { id: 'point-3', x: 50, y: 15 },
+      { id: 'point-4', x: 75, y: 10 },
+      { id: 'point-5', x: 100, y: 0 }
+    ];
+    
+    // Use provided points if available, otherwise use defaults
+    const elevationPoints = substrateSettings?.elevationPoints || defaultPoints;
+    const sortedPoints = [...elevationPoints].sort((a, b) => a.x - b.x);
     
     // Start with bottom left
     let points: number[] = [0, stageHeight];
     
-    // Add elevation points
+    // Add elevation points, ensuring all values are valid numbers
     sortedPoints.forEach(point => {
-      const x = (point.x / 100) * stageWidth;
-      const y = stageHeight - baseHeight - ((point.y / 100) * baseHeight);
-      points.push(x, y);
+      const pointX = Number.isNaN(point.x) ? 0 : point.x;
+      const pointY = Number.isNaN(point.y) ? 0 : point.y;
+      
+      const x = (pointX / 100) * stageWidth;
+      const y = stageHeight - baseHeight - ((pointY / 100) * baseHeight);
+      
+      // Only add point if coordinates are valid numbers
+      if (!Number.isNaN(x) && !Number.isNaN(y)) {
+        points.push(x, y);
+      }
     });
     
     // Add bottom right and close the shape
@@ -411,19 +439,35 @@ export default function Canvas() {
             {/* Substrate with elevation */}
             <Shape
               sceneFunc={(context, shape) => {
-                // Calculate substrate points
-                const points = calculateSubstratePoints();
-                context.beginPath();
-                context.moveTo(points[0], points[1]);
-                
-                for (let i = 2; i < points.length; i += 2) {
-                  context.lineTo(points[i], points[i + 1]);
+                try {
+                  // Calculate substrate points
+                  const points = calculateSubstratePoints();
+                  
+                  // Only proceed if we have valid points
+                  if (points && points.length >= 4) {
+                    context.beginPath();
+                    context.moveTo(points[0], points[1]);
+                    
+                    for (let i = 2; i < points.length; i += 2) {
+                      // Only draw line if coordinates are valid numbers
+                      if (!Number.isNaN(points[i]) && !Number.isNaN(points[i + 1])) {
+                        context.lineTo(points[i], points[i + 1]);
+                      }
+                    }
+                    
+                    context.closePath();
+                    context.fillStrokeShape(shape);
+                  }
+                } catch (error) {
+                  console.error("Error drawing substrate shape:", error);
+                  // Draw a simple rectangle as fallback if there's an error
+                  context.beginPath();
+                  context.rect(0, stageHeight - 30, stageWidth, 30);
+                  context.closePath();
+                  context.fillStrokeShape(shape);
                 }
-                
-                context.closePath();
-                context.fillStrokeShape(shape);
               }}
-              fill={getVariantColor(substrateSettings.typeId, substrateSettings.variantId)}
+              fill={getVariantColor(substrateSettings?.typeId || 'sand', substrateSettings?.variantId || 'sand-light')}
               stroke="#a18a68"
               strokeWidth={1}
               shadowColor="rgba(0, 0, 0, 0.1)"
