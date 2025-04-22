@@ -25,7 +25,7 @@ const GALLON_TO_LITER = 3.78541;
 
 export default function TankDimensionsForm({ dimensions, onChange }: TankDimensionsProps) {
   const [isExpanded, setIsExpanded] = useState(true);
-  const [selectedPreset, setSelectedPreset] = useState<string>("");
+  const [selectedPreset, setSelectedPreset] = useState<string>("none");
   
   // Imperial unit state (inches)
   const [imperialDimensions, setImperialDimensions] = useState({
@@ -49,7 +49,7 @@ export default function TankDimensionsForm({ dimensions, onChange }: TankDimensi
       Math.abs(preset.height - newImperialDimensions.height) < 0.1 &&
       Math.abs(preset.depth - newImperialDimensions.depth) < 0.1
     );
-    setSelectedPreset(matchingPreset?.name || "");
+    setSelectedPreset(matchingPreset?.name || "none");
   }, [dimensions]);
   
   const handleImperialChange = (field: keyof TankDimensions, value: string) => {
@@ -68,11 +68,23 @@ export default function TankDimensionsForm({ dimensions, onChange }: TankDimensi
       });
       
       // Reset the tank preset selection when dimensions are manually changed
-      setSelectedPreset("");
+      setSelectedPreset("none");
     }
   };
 
   const handlePresetSelect = (presetName: string) => {
+    console.log("Selected preset:", presetName);
+    
+    // First update the selected preset in state
+    setSelectedPreset(presetName);
+    
+    // Check if we're selecting a preset or the "none" option
+    if (presetName === "none") {
+      // Just keep current dimensions when "none" is selected
+      return;
+    }
+    
+    // Find the preset with the matching name
     const preset = tankPresets.find(p => p.name === presetName);
     if (preset) {
       // Convert preset inches to centimeters for the store
@@ -81,7 +93,6 @@ export default function TankDimensionsForm({ dimensions, onChange }: TankDimensi
         height: Math.round(preset.height * INCH_TO_CM),
         depth: Math.round(preset.depth * INCH_TO_CM)
       });
-      setSelectedPreset(presetName);
     }
   };
   
@@ -107,14 +118,15 @@ export default function TankDimensionsForm({ dimensions, onChange }: TankDimensi
           <div className="mb-4">
             <Label className="block text-xs text-ui-light mb-1">Preset Sizes</Label>
             <Select 
-              value={selectedPreset || ""} 
+              value={selectedPreset}
               onValueChange={handlePresetSelect}
-              defaultValue=""
+              defaultValue="none"
             >
               <SelectTrigger className="w-full">
                 <SelectValue placeholder="Choose a standard size..." />
               </SelectTrigger>
               <SelectContent>
+                <SelectItem value="none" key="none-value">Choose a standard size...</SelectItem>
                 {tankPresets.map(preset => (
                   <SelectItem key={preset.name} value={preset.name}>
                     {preset.name} ({preset.width}×{preset.height}×{preset.depth}")
