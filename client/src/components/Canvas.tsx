@@ -39,6 +39,51 @@ import {
 } from "@/components/ui/alert-dialog";
 
 // Custom element component with event handling
+// Fallback image for when loading fails
+const fallbackImage = new window.Image(100, 100);
+fallbackImage.src = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='100' height='100' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' fill='%23f3f4f6'/%3E%3Cpath d='M30,30 L70,70 M30,70 L70,30' stroke='%23d1d5db' stroke-width='5'/%3E%3C/svg%3E";
+
+// Custom hook for safe image loading
+const useSafeImage = (src: string) => {
+  const [image, setImage] = useState<HTMLImageElement | null>(null);
+  const [status, setStatus] = useState<'loading' | 'loaded' | 'failed'>('loading');
+  
+  useEffect(() => {
+    // Create a new image object
+    const img = new window.Image();
+    
+    // Set up load and error handlers
+    img.onload = () => {
+      // Only set the image if it has valid dimensions
+      if (img.width > 0 && img.height > 0) {
+        setImage(img);
+        setStatus('loaded');
+      } else {
+        console.error(`Invalid image dimensions for ${src}: ${img.width}x${img.height}`);
+        setImage(fallbackImage);
+        setStatus('failed');
+      }
+    };
+    
+    img.onerror = () => {
+      console.error(`Failed to load image: ${src}`);
+      setImage(fallbackImage);
+      setStatus('failed');
+    };
+    
+    // Start loading
+    img.src = src;
+    
+    // Clean up
+    return () => {
+      img.onload = null;
+      img.onerror = null;
+    };
+  }, [src]);
+  
+  return { image, status };
+};
+
 const CanvasElementComponent = ({ 
   element, 
   isSelected, 
@@ -58,14 +103,8 @@ const CanvasElementComponent = ({
     ? element.src 
     : `/${element.src}`;
     
-  const [image, status] = useImage(imagePath);
-  
-  // Log image loading status for debugging
-  useEffect(() => {
-    if (status === 'failed') {
-      console.error(`Failed to load image: ${imagePath}`);
-    }
-  }, [status, imagePath]);
+  // Use our safe image loading hook
+  const { image, status } = useSafeImage(imagePath);
   
   // Update transformer on selection change
   useEffect(() => {

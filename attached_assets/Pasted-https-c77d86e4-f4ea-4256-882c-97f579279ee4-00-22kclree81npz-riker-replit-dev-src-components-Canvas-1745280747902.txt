@@ -1,0 +1,29 @@
+https://c77d86e4-f4ea-4256-882c-97f579279ee4-00-22kclree81npz.riker.replit.dev/src/components/Canvas.tsx:202:20)
+    at div
+    at Editor (https://c77d86e4-f4ea-4256-882c-97f579279ee4-00-22kclree81npz.riker.replit.dev/src/pages/Editor.tsx:29:27)
+    at Route (https://c77d86e4-f4ea-4256-882c-97f579279ee4-00-22kclree81npz.riker.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/wouter.js?v=786fd6b9:323:16)
+    at ProtectedRoute (https://c77d86e4-f4ea-4256-882c-97f579279ee4-00-22kclree81npz.riker.replit.dev/src/lib/protected-route.tsx:22:3)
+    at Switch (https://c77d86e4-f4ea-4256-882c-97f579279ee4-00-22kclree81npz.riker.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/wouter.js?v=786fd6b9:379:17)
+    at main
+    at div
+    at Provider (https://c77d86e4-f4ea-4256-882c-97f579279ee4-00-22kclree81npz.riker.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/chunk-MV53PHM7.js?v=786fd6b9:48:15)
+    at TooltipProvider (https://c77d86e4-f4ea-4256-882c-97f579279ee4-00-22kclree81npz.riker.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/@radix-ui_react-tooltip.js?v=786fd6b9:60:5)
+    at DndProvider2 (https://c77d86e4-f4ea-4256-882c-97f579279ee4-00-22kclree81npz.riker.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/react-dnd.js?v=786fd6b9:1505:9)
+    at AuthProvider (https://c77d86e4-f4ea-4256-882c-97f579279ee4-00-22kclree81npz.riker.replit.dev/src/hooks/use-auth.tsx:26:32)
+    at QueryClientProvider (https://c77d86e4-f4ea-4256-882c-97f579279ee4-00-22kclree81npz.riker.replit.dev/@fs/home/runner/workspace/node_modules/.vite/deps/@tanstack_react-query.js?v=786fd6b9:2805:3)
+    at App (https://c77d86e4-f4ea-4256-882c-97f579279ee4-00-22kclree81npz.riker.replit.dev/src/App.tsx?v=BcA5OLyxp-FkRdcbDUQX8:40:22)
+
+Consider adding an error boundary to your tree to customize error handling behavior.
+Visit https://reactjs.org/link/error-boundaries to learn more about error boundaries.
+console.error @ index.tsx:86
+react-dom.development.js:12056  Uncaught InvalidStateError: Failed to execute 'drawImage' on 'CanvasRenderingContext2D': The image argument is a canvas element with a width or height of 0.
+    at SceneContext.drawImage (Context.js:234:22)
+    at Shape2.drawScene (Shape.js:356:21)
+    at Container.js:238:29
+    at Array.forEach (<anonymous>)
+    at Layer2._drawChildren (Container.js:237:70)
+    at Layer2.drawScene (Container.js:185:18)
+    at Layer2.drawScene (Layer.js:256:51)
+    at Layer2.draw (Node.js:1204:14)
+    at Stage2.add (Stage.js:278:15)
+    at appendChildToContainer (ReactKonvaHostConfig.js:104:24)
