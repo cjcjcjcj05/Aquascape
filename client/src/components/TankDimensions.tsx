@@ -25,7 +25,7 @@ const GALLON_TO_LITER = 3.78541;
 
 export default function TankDimensionsForm({ dimensions, onChange }: TankDimensionsProps) {
   const [isExpanded, setIsExpanded] = useState(true);
-  const [selectedPreset, setSelectedPreset] = useState<string | null>(null);
+  const [selectedPreset, setSelectedPreset] = useState<string>("");
   
   // Imperial unit state (inches)
   const [imperialDimensions, setImperialDimensions] = useState({
@@ -49,7 +49,7 @@ export default function TankDimensionsForm({ dimensions, onChange }: TankDimensi
       Math.abs(preset.height - newImperialDimensions.height) < 0.1 &&
       Math.abs(preset.depth - newImperialDimensions.depth) < 0.1
     );
-    setSelectedPreset(matchingPreset?.name || null);
+    setSelectedPreset(matchingPreset?.name || "");
   }, [dimensions]);
   
   const handleImperialChange = (field: keyof TankDimensions, value: string) => {
@@ -68,7 +68,7 @@ export default function TankDimensionsForm({ dimensions, onChange }: TankDimensi
       });
       
       // Clear selected preset when manually changing dimensions
-      setSelectedPreset(null);
+      setSelectedPreset("");
     }
   };
 
@@ -106,11 +106,16 @@ export default function TankDimensionsForm({ dimensions, onChange }: TankDimensi
         <>
           <div className="mb-4">
             <Label className="block text-xs text-ui-light mb-1">Preset Sizes</Label>
-            <Select value={selectedPreset || ""} onValueChange={handlePresetSelect}>
-              <SelectTrigger>
+            <Select 
+              value={selectedPreset || ""} 
+              onValueChange={handlePresetSelect}
+              defaultValue=""
+            >
+              <SelectTrigger className="w-full">
                 <SelectValue placeholder="Choose a standard size..." />
               </SelectTrigger>
               <SelectContent>
+                <SelectItem value="">Choose a standard size...</SelectItem>
                 {tankPresets.map(preset => (
                   <SelectItem key={preset.name} value={preset.name}>
                     {preset.name} ({preset.width}×{preset.height}×{preset.depth}")
