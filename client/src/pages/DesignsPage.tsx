@@ -90,11 +90,11 @@ export default function DesignsPage() {
           <Link href="/editor">
             <Button>
               <Plus className="h-4 w-4 mr-2" />
-              New Design
+              Create New Design
             </Button>
           </Link>
         </div>
-        <p className="text-muted-foreground">Manage your saved aquascaping designs</p>
+        <p className="text-muted-foreground">Create, manage and edit your aquascaping designs</p>
       </div>
 
       {designs && designs.length > 0 ? (
@@ -102,7 +102,7 @@ export default function DesignsPage() {
           {designs.map((design) => (
             <Card key={design.id} className="overflow-hidden">
               <div 
-                className="h-48 bg-muted flex items-center justify-center cursor-pointer"
+                className="h-48 bg-muted flex items-center justify-center cursor-pointer hover:bg-muted/80 transition-colors"
                 onClick={() => handleLoadDesign(design.id)}
               >
                 <div className="w-32 h-24 border-2 border-primary-100 rounded flex items-center justify-center text-primary">
@@ -122,26 +122,18 @@ export default function DesignsPage() {
                   variant="outline" 
                   size="sm"
                   onClick={() => handleLoadDesign(design.id)}
+                  className="flex-1 mr-2"
                 >
-                  <EyeIcon className="h-4 w-4 mr-2" />
-                  Open
+                  <Edit className="h-4 w-4 mr-2" />
+                  Edit Design
                 </Button>
-                <div className="flex space-x-2">
-                  <Button 
-                    variant="ghost" 
-                    size="sm"
-                    onClick={() => handleLoadDesign(design.id)}
-                  >
-                    <Edit className="h-4 w-4" />
-                  </Button>
-                  <Button 
-                    variant="ghost" 
-                    size="sm"
-                    onClick={() => handleDeleteClick(design)}
-                  >
-                    <Trash2 className="h-4 w-4 text-destructive" />
-                  </Button>
-                </div>
+                <Button 
+                  variant="ghost" 
+                  size="sm"
+                  onClick={() => handleDeleteClick(design)}
+                >
+                  <Trash2 className="h-4 w-4 text-destructive" />
+                </Button>
               </CardFooter>
             </Card>
           ))}
@@ -153,9 +145,9 @@ export default function DesignsPage() {
               <Plus className="h-6 w-6 text-primary" />
             </div>
           </div>
-          <h3 className="text-xl font-medium mb-2">No designs yet</h3>
+          <h3 className="text-xl font-medium mb-2">Create Your First Design</h3>
           <p className="text-muted-foreground mb-6 max-w-md">
-            Start creating your first aquascape design to see it here. You can save and manage all your designs from this page.
+            Start your aquascaping journey by creating your first design. You can save, edit, and manage all your designs from here.
           </p>
           <Link href="/editor">
             <Button>

@@ -140,17 +140,11 @@ export default function Header() {
             Home
           </span>
         </Link>
-        <Link href="/editor">
-          <span className={`font-medium cursor-pointer ${location === '/editor' ? 'text-primary border-b-2 border-primary pb-1' : 'text-ui-dark hover:text-primary'} transition`}>
-            Editor
-          </span>
-        </Link>
         <Link href="/designs">
           <span className={`font-medium cursor-pointer ${location === '/designs' ? 'text-primary border-b-2 border-primary pb-1' : 'text-ui-dark hover:text-primary'} transition`}>
             My Designs
           </span>
         </Link>
-        {/* Asset Generator hidden from regular users - accessible via direct URL */}
         <Link href="/about">
           <span className={`font-medium cursor-pointer ${location === '/about' ? 'text-primary border-b-2 border-primary pb-1' : 'text-ui-dark hover:text-primary'} transition`}>
             About

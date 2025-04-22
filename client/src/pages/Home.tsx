@@ -14,9 +14,9 @@ export default function Home() {
             Visualize your aquascape before bringing it to life.
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <Link href="/editor">
+            <Link href="/designs">
               <Button className="bg-primary hover:bg-primary/90 text-white px-8 py-6 rounded-md font-medium text-lg">
-                Start Designing
+                Get Started
               </Button>
             </Link>
             <Link href="/about">
