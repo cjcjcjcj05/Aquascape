@@ -17,7 +17,7 @@ export default function Sidebar() {
   return (
     <aside className="w-72 bg-white border-r border-gray-200 flex flex-col h-full">
       {/* Project Info - Fixed Height Header */}
-      <div className="shrink-0 p-4 border-b border-gray-200">
+      <div className="p-4 border-b border-gray-200">
         <div className="flex items-center justify-between mb-3">
           {isEditingName ? (
             <input
@@ -30,6 +30,8 @@ export default function Sidebar() {
               }}
               className="font-poppins font-semibold text-lg border border-gray-300 rounded px-2 py-1 w-full"
               autoFocus
+              aria-label="Project name"
+              placeholder="Enter project name"
             />
           ) : (
             <h2 
@@ -39,7 +41,11 @@ export default function Sidebar() {
               {projectName}
             </h2>
           )}
-          <button className="text-ui-light hover:text-ui-dark transition">
+          <button 
+            className="text-ui-light hover:text-ui-dark transition"
+            aria-label="Project options"
+            title="Project options"
+          >
             <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
               <path d="M10 6a2 2 0 110-4 2 2 0 010 4zM10 12a2 2 0 110-4 2 2 0 010 4zM10 18a2 2 0 110-4 2 2 0 010 4z" />
             </svg>
@@ -51,71 +57,57 @@ export default function Sidebar() {
           onChange={setTankDimensions}
         />
       </div>
-      
-      {/* Tabs Navigation - Fixed Height */}
-      <div className="shrink-0 border-b border-gray-200">
-        <div className="flex">
-          <button 
-            className={`flex-1 px-4 py-3 text-left font-medium ${activeTab === 'library' ? 'text-primary border-b-2 border-primary' : 'text-ui-light'} hover:bg-gray-50 transition focus:outline-none`}
-            onClick={() => setActiveTab('library')}
-          >
-            Library
-          </button>
-          <button 
-            className={`flex-1 px-4 py-3 text-left font-medium ${activeTab === 'layers' ? 'text-primary border-b-2 border-primary' : 'text-ui-light'} hover:bg-gray-50 transition focus:outline-none`}
-            onClick={() => setActiveTab('layers')}
-          >
-            Layers
-          </button>
-        </div>
+
+      {/* Tabs Navigation */}
+      <div className="flex border-b border-gray-200" role="tablist">
+        <button
+          role="tab"
+          aria-selected={activeTab === 'library' ? 'true' : 'false'}
+          id="library-tab"
+          aria-controls="library-panel"
+          className={`flex-1 py-2 px-4 text-sm font-medium ${
+            activeTab === 'library'
+              ? 'text-primary border-b-2 border-primary'
+              : 'text-ui-light hover:text-ui-dark'
+          }`}
+          onClick={() => setActiveTab('library')}
+        >
+          Library
+        </button>
+        <button
+          role="tab"
+          aria-selected={activeTab === 'layers' ? 'true' : 'false'}
+          id="layers-tab"
+          aria-controls="layers-panel"
+          className={`flex-1 py-2 px-4 text-sm font-medium ${
+            activeTab === 'layers'
+              ? 'text-primary border-b-2 border-primary'
+              : 'text-ui-light hover:text-ui-dark'
+          }`}
+          onClick={() => setActiveTab('layers')}
+        >
+          <div className="flex items-center justify-center gap-1">
+            <FaLayerGroup className="h-4 w-4" aria-hidden="true" />
+            <span>Layers</span>
+            <span className="ml-1 bg-gray-100 text-ui-light text-xs px-1.5 rounded-full">
+              {elements.length}
+            </span>
+          </div>
+        </button>
       </div>
-      
-      {/* Category Navigation - Fixed Height */}
-      {activeTab === 'library' && (
-        <div className="shrink-0">
-          <CategoryNav />
-        </div>
-      )}
-      
-      {/* Content Area - Flexible Height */}
-      <div className="grow flex flex-col" style={{ height: 'calc(100vh - 250px)', overflow: 'hidden' }}>
+
+      {/* Tab Content - Scrollable */}
+      <div 
+        className="flex-1 overflow-y-auto"
+        role="tabpanel"
+        id={activeTab === 'library' ? 'library-panel' : 'layers-panel'}
+        aria-labelledby={activeTab === 'library' ? 'library-tab' : 'layers-tab'}
+      >
         {activeTab === 'library' ? (
           <AssetLibrary />
         ) : (
-          <div className="flex-1 overflow-y-auto p-4">
-            <h3 className="font-medium text-sm mb-3">Elements</h3>
-            {elements.length === 0 ? (
-              <div className="text-center p-4 text-ui-light">
-                <FaLayerGroup className="w-8 h-8 mx-auto mb-2 opacity-50" />
-                <p className="text-sm">No elements yet. Drag items from the library to add them to your aquascape.</p>
-              </div>
-            ) : (
-              <ul className="space-y-2">
-                {elements.map((element) => (
-                  <li key={element.id} className="p-2 bg-gray-50 rounded-md flex items-center justify-between">
-                    <div className="flex items-center">
-                      <div className="w-6 h-6 mr-2 flex-shrink-0 bg-white rounded border border-gray-200 overflow-hidden">
-                        <img src={element.src} alt={element.name} className="w-full h-full object-cover" />
-                      </div>
-                      <span className="text-sm font-medium truncate">{element.name}</span>
-                    </div>
-                    <div className="flex items-center space-x-1">
-                      <Button variant="ghost" size="sm" className="h-6 w-6 p-0">
-                        <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" viewBox="0 0 20 20" fill="currentColor">
-                          <path d="M10 12a2 2 0 100-4 2 2 0 000 4z" />
-                          <path fillRule="evenodd" d="M.458 10C1.732 5.943 5.522 3 10 3s8.268 2.943 9.542 7c-1.274 4.057-5.064 7-9.542 7S1.732 14.057.458 10zM14 10a4 4 0 11-8 0 4 4 0 018 0z" clipRule="evenodd" />
-                        </svg>
-                      </Button>
-                      <Button variant="ghost" size="sm" className="h-6 w-6 p-0 text-red-500">
-                        <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" viewBox="0 0 20 20" fill="currentColor">
-                          <path fillRule="evenodd" d="M9 2a1 1 0 00-.894.553L7.382 4H4a1 1 0 000 2v10a2 2 0 002 2h8a2 2 0 002-2V6a1 1 0 100-2h-3.382l-.724-1.447A1 1 0 0011 2H9zM7 8a1 1 0 012 0v6a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v6a1 1 0 102 0V8a1 1 0 00-1-1z" clipRule="evenodd" />
-                        </svg>
-                      </Button>
-                    </div>
-                  </li>
-                ))}
-              </ul>
-            )}
+          <div className="p-4">
+            <CategoryNav />
           </div>
         )}
       </div>
